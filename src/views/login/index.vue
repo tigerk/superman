@@ -33,7 +33,6 @@ import Check from "~icons/ep/check";
 import User from "~icons/ri/user-3-fill";
 import Info from "~icons/ri/information-line";
 import Keyhole from "~icons/ri/shield-keyhole-line";
-import Tenant from "~icons/ri/home-gear-line";
 
 defineOptions({
   name: "Login"
@@ -64,12 +63,10 @@ const {
   translationJa,
   translationKo
 } = useTranslationLang();
-const { VITE_ENABLE_TENANT } = import.meta.env;
 
 const ruleForm = reactive({
-  tenant: "pure-admin",
-  username: "super-admin",
-  password: "123456",
+  username: "",
+  password: "",
   verifyCode: ""
 });
 
@@ -229,26 +226,6 @@ watch(loginDay, value => {
             :rules="loginRules"
             size="large"
           >
-            <Motion v-if="VITE_ENABLE_TENANT === 'true'">
-              <el-form-item
-                :rules="[
-                  {
-                    required: true,
-                    message: transformI18n($t('login.pureTenantReg')),
-                    trigger: 'blur'
-                  }
-                ]"
-                prop="tenant"
-              >
-                <el-input
-                  v-model="ruleForm.tenant"
-                  clearable
-                  :placeholder="t('login.pureTenant')"
-                  :prefix-icon="useRenderIcon(Tenant)"
-                />
-              </el-form-item>
-            </Motion>
-
             <Motion :delay="100">
               <el-form-item
                 :rules="[
@@ -363,29 +340,6 @@ watch(loginDay, value => {
               </el-form-item>
             </Motion>
           </el-form>
-
-          <Motion v-if="currentPage === 0" :delay="350">
-            <el-form-item>
-              <el-divider>
-                <p class="text-gray-500 text-xs">
-                  {{ t("login.pureThirdLogin") }}
-                </p>
-              </el-divider>
-              <div class="w-full flex justify-evenly">
-                <span
-                  v-for="(item, index) in thirdParty"
-                  :key="index"
-                  :title="t(item.title)"
-                >
-                  <IconifyIconOnline
-                    :icon="`ri:${item.icon}-fill`"
-                    width="20"
-                    class="cursor-pointer text-gray-500 hover:text-blue-400"
-                  />
-                </span>
-              </div>
-            </el-form-item>
-          </Motion>
           <!-- 手机号登录 -->
           <LoginPhone v-if="currentPage === 1" />
           <!-- 二维码登录 -->
