@@ -6,9 +6,6 @@ const operates = [
   },
   {
     title: $t("login.pureQRCodeLogin")
-  },
-  {
-    title: $t("login.pureRegister")
   }
 ];
 
