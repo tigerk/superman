@@ -231,7 +231,7 @@ watch(loginDay, value => {
                 :rules="[
                   {
                     required: true,
-                    message: transformI18n($t('login.pureUsernameReg')),
+                    message: '请输入账号',
                     trigger: 'blur'
                   }
                 ]"
@@ -240,7 +240,7 @@ watch(loginDay, value => {
                 <el-input
                   v-model="ruleForm.username"
                   clearable
-                  :placeholder="t('login.pureUsername')"
+                  placeholder="账号 or 手机号"
                   :prefix-icon="useRenderIcon(User)"
                 />
               </el-form-item>
@@ -303,13 +303,14 @@ watch(loginDay, value => {
                       />
                     </span>
                   </el-checkbox>
-                  <el-button
-                    link
-                    type="primary"
-                    @click="useUserStoreHook().SET_CURRENTPAGE(4)"
+                  <el-tooltip
+                    class="box-item"
+                    effect="dark"
+                    content="忘记密码请联系管理员"
+                    placement="top"
                   >
-                    {{ t("login.pureForget") }}
-                  </el-button>
+                    <el-button link type="primary">忘记密码？</el-button>
+                  </el-tooltip>
                 </div>
                 <el-button
                   class="w-full mt-4!"
