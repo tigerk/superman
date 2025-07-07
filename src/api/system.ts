@@ -136,16 +136,16 @@ export const createCompanyPackage = (data?: object) => {
 
 /** 获取租户套餐-权限-菜单权限 */
 export const getCompanyPackageMenuList = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("/company/package/menus/list"), { data });
+  return http.request<Result>("post", baseUrlApi("company/package/menus/list"), { data });
 };
 
 /** 获取租户套餐-权限-菜单权限-根据角色 id 查对应菜单 */
 export const getCompanyPackageMenus = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("/company/package/menus/get"), { data });
+  return http.request<Result>("post", baseUrlApi("company/package/menus/get"), { data });
 };
 
 export const saveCompanyPackageMenus = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("/company/package/menus/save"), { data });
+  return http.request<Result>("post", baseUrlApi("company/package/menus/save"), { data });
 };
 
 /** 获取租户套餐列表（用于下拉选择） */
