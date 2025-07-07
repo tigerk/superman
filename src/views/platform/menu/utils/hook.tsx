@@ -84,7 +84,11 @@ export function useMenu() {
     {
       label: "平台菜单",
       prop: "isPlatform",
-      formatter: ({ isPlatform }) => (isPlatform ? "是" : "否"),
+      cellRenderer: ({ row, props }) => (
+        <el-tag type={row.isPlatform ? "danger" : "primary"} effect="plain">
+          {row.isPlatform ? "是" : "否"}
+        </el-tag>
+      ),
       width: 100
     },
     {
