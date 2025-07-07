@@ -1,14 +1,14 @@
 import editForm from "../form.vue";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
-import { deleteMenu, getMenuList } from "@/api/platform/menu";
+import { deleteMenu, getMenuList } from "@/api/menu";
 import { transformI18n } from "@/plugins/i18n";
 import { addDialog } from "@/components/ReDialog/index";
 import { reactive, ref, onMounted, h } from "vue";
 import type { FormItemProps } from "./types";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { cloneDeep, isAllEmpty, deviceDetection } from "@pureadmin/utils";
-import { createMenu } from "@/api/platform/menu";
+import { createMenu } from "@/api/menu";
 
 export function useMenu() {
   const form = reactive({
@@ -181,6 +181,7 @@ export function useMenu() {
         const curData = options.props.formInline as FormItemProps;
 
         function chores() {
+          debugger;
           createMenu(curData).then(resp => {
             if (resp.code == 0) {
               message(
