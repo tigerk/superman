@@ -14,7 +14,7 @@ interface FormItemProps {
   /** 通信地址 */
   address: string;
   /** 区域ID */
-  regionId: number;
+  regionIds: number[];
   /** 联系人 */
   contactName: string;
   /** 联系电话 */
@@ -31,6 +31,8 @@ interface FormItemProps {
   adminUserId: number;
   /** 备注 */
   remark: string;
+  /** 公司性质 1：企业 2：个人 */
+  nature: number;
 }
 
 interface FormProps {
