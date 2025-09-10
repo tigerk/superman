@@ -37,7 +37,8 @@ import {
   getUserList,
   updateUser,
   resetUserPassword,
-  updateUserStatus, updateUserAvatar
+  updateUserStatus,
+  updateUserAvatar
 } from "@/api/user";
 
 export function useUser(tableRef: Ref) {
@@ -64,12 +65,6 @@ export function useUser(tableRef: Ref) {
     background: true
   });
   const columns: TableColumnList = [
-    {
-      label: "勾选列", // 如果需要表格多选，此处label必须设置
-      type: "selection",
-      fixed: "left",
-      reserveSelection: true // 数据刷新后保留选项
-    },
     {
       label: "用户编号",
       prop: "id",

@@ -71,15 +71,6 @@ defineExpose({ getRef });
         </el-alert>
       </re-col>
       <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="用户昵称" prop="nickname">
-          <el-input
-            v-model="newFormInline.nickname"
-            clearable
-            placeholder="请输入用户昵称"
-          />
-        </el-form-item>
-      </re-col>
-      <re-col :value="12" :xs="24" :sm="24">
         <el-form-item label="用户名称" prop="username">
           <el-input
             v-model="newFormInline.username"
@@ -88,7 +79,15 @@ defineExpose({ getRef });
           />
         </el-form-item>
       </re-col>
-
+      <re-col :value="12" :xs="24" :sm="24">
+        <el-form-item label="用户昵称" prop="nickname">
+          <el-input
+            v-model="newFormInline.nickname"
+            clearable
+            placeholder="请输入用户昵称"
+          />
+        </el-form-item>
+      </re-col>
       <re-col
         v-if="newFormInline.title === '新增'"
         :value="12"
