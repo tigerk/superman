@@ -4,6 +4,7 @@ import { formRules } from "./utils/rule";
 import { FormProps } from "./utils/types";
 import { getCompanyPackageSimple, getCompanyUserSimple } from "@/api/system";
 import RegionCascader from "@/components/Business/RegionCascader.vue";
+import ReCol from "@/components/ReCol";
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
@@ -141,7 +142,11 @@ defineExpose({ getRef });
         placeholder="请输入通信地址"
       />
     </el-form-item>
-
+    <re-col class="px-2 pb-3.5">
+      <el-alert type="warning" show-icon :closable="false">
+        <p>找不到用户，请在用户管理中创建用户后再操作</p>
+      </el-alert>
+    </re-col>
     <el-form-item label="管理员" prop="adminUserId">
       <el-select
         v-model="newFormInline.adminUserId"
