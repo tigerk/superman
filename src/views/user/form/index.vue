@@ -3,7 +3,7 @@ import { ref } from "vue";
 import ReCol from "@/components/ReCol";
 import { formRules } from "../utils/rule";
 import { FormProps } from "../utils/types";
-import { usePublicHooks } from "../../hooks";
+import { usePublicHooks } from "../publicHooks";
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
@@ -15,22 +15,35 @@ const props = withDefaults(defineProps<FormProps>(), {
     password: "",
     phone: "",
     email: "",
-    sex: "",
+    gender: "",
+    userType: 20,
     status: 1,
     remark: ""
   })
 });
 
-const sexOptions = [
+const genderOptions = [
   {
-    value: 0,
+    value: 1,
     label: "男"
   },
   {
-    value: 1,
+    value: 2,
     label: "女"
   }
 ];
+
+const userTypeOptions = [
+  {
+    value: 20,
+    label: "公司用户"
+  },
+  {
+    value: 10,
+    label: "平台管理员"
+  }
+];
+
 const ruleFormRef = ref();
 const { switchStyle } = usePublicHooks();
 const newFormInline = ref(props.formInline);
@@ -50,6 +63,13 @@ defineExpose({ getRef });
     label-width="82px"
   >
     <el-row :gutter="30">
+      <re-col class="p-4">
+        <el-alert type="info" show-icon :closable="false">
+          <p>
+            用户类型默认“公司用户”，设置为“平台超级管理员”可以操作平台所有功能
+          </p>
+        </el-alert>
+      </re-col>
       <re-col :value="12" :xs="24" :sm="24">
         <el-form-item label="用户昵称" prop="nickname">
           <el-input
@@ -103,15 +123,15 @@ defineExpose({ getRef });
         </el-form-item>
       </re-col>
       <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="用户性别">
+        <el-form-item label="用户性别" prop="gender">
           <el-select
-            v-model="newFormInline.sex"
+            v-model="newFormInline.gender"
             placeholder="请选择用户性别"
             class="w-full"
             clearable
           >
             <el-option
-              v-for="(item, index) in sexOptions"
+              v-for="(item, index) in genderOptions"
               :key="index"
               :label="item.label"
               :value="item.value"
@@ -119,28 +139,21 @@ defineExpose({ getRef });
           </el-select>
         </el-form-item>
       </re-col>
-
       <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="归属部门">
-          <el-cascader
-            v-model="newFormInline.parentId"
+        <el-form-item label="用户类型" prop="userType">
+          <el-select
+            v-model="newFormInline.userType"
+            placeholder="请选择用户类型"
             class="w-full"
-            :options="newFormInline.higherDeptOptions"
-            :props="{
-              value: 'id',
-              label: 'name',
-              emitPath: false,
-              checkStrictly: true
-            }"
             clearable
-            filterable
-            placeholder="请选择归属部门"
           >
-            <template #default="{ node, data }">
-              <span>{{ data.name }}</span>
-              <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
-            </template>
-          </el-cascader>
+            <el-option
+              v-for="(item, index) in userTypeOptions"
+              :key="index"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
       </re-col>
       <re-col

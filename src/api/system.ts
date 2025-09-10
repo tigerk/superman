@@ -22,11 +22,6 @@ type ResultTable = {
   };
 };
 
-/** 获取系统管理-用户管理列表 */
-export const getUserList = (data?: object) => {
-  return http.request<ResultTable>("post", baseUrlApi("user/list"), { data });
-};
-
 /** 系统管理-用户管理-获取所有角色列表 */
 export const getAllRoleList = () => {
   return http.request<Result>("get", "/list-all-role");
@@ -94,17 +89,25 @@ export const getDictDetail = (data?: object) => {
 
 /** 获取公司管理-公司列表 */
 export const getCompanyList = (data?: object) => {
-  return http.request<ResultTable>("post", baseUrlApi("company/list"), { data });
+  return http.request<ResultTable>("post", baseUrlApi("company/list"), {
+    data
+  });
 };
 
 /** 获取公司管理-公司列表 */
 export const createCompany = (data?: object) => {
-  return http.request<ResultTable>("post", baseUrlApi("company/create"), { data });
+  return http.request<ResultTable>("post", baseUrlApi("company/create"), {
+    data
+  });
 };
 
 /** 修改公司的启用状态 */
 export const changeCompanyStatus = (data?: object) => {
-  return http.request<ResultTable>("post", baseUrlApi("company/status/change"), { data });
+  return http.request<ResultTable>(
+    "post",
+    baseUrlApi("company/status/change"),
+    { data }
+  );
 };
 
 /**
@@ -123,32 +126,55 @@ export const changeCompanyStatus = (data?: object) => {
  * - msg: 消息
  */
 export const getCompanyPackageList = (data?: object) => {
-  return http.request<ResultTable>("post", baseUrlApi("company/package/list"), { data });
+  return http.request<ResultTable>("post", baseUrlApi("company/package/list"), {
+    data
+  });
 };
 
 export const changeCompanyPackageStatus = (data?: object) => {
-  return http.request<ResultTable>("post", baseUrlApi("company/package/status/change"), { data });
+  return http.request<ResultTable>(
+    "post",
+    baseUrlApi("company/package/status/change"),
+    { data }
+  );
 };
 
 export const createCompanyPackage = (data?: object) => {
-  return http.request<ResultTable>("post", baseUrlApi("company/package/create"), { data });
+  return http.request<ResultTable>(
+    "post",
+    baseUrlApi("company/package/create"),
+    { data }
+  );
 };
 
 /** 获取租户套餐-权限-菜单权限 */
 export const getCompanyPackageMenuList = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("company/package/menus/list"), { data });
+  return http.request<Result>(
+    "post",
+    baseUrlApi("company/package/menus/list"),
+    { data }
+  );
 };
 
 /** 获取租户套餐-权限-菜单权限-根据角色 id 查对应菜单 */
 export const getCompanyPackageMenus = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("company/package/menus/get"), { data });
+  return http.request<Result>("post", baseUrlApi("company/package/menus/get"), {
+    data
+  });
 };
 
 export const saveCompanyPackageMenus = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("company/package/menus/save"), { data });
+  return http.request<Result>(
+    "post",
+    baseUrlApi("company/package/menus/save"),
+    { data }
+  );
 };
 
 /** 获取租户套餐列表（用于下拉选择） */
 export const getCompanyPackageSimple = () => {
-  return http.request<Result>("post", baseUrlApi("/company/package/list/simple"));
+  return http.request<Result>(
+    "post",
+    baseUrlApi("/company/package/list/simple")
+  );
 };

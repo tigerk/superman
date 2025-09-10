@@ -38,6 +38,12 @@ export function useTenantList() {
     {
       label: "公司编号",
       prop: "id",
+      minWidth: 80,
+      hide: true
+    },
+    {
+      label: "简称",
+      prop: "abbr",
       minWidth: 80
     },
     {
@@ -58,6 +64,11 @@ export function useTenantList() {
     {
       label: "联系电话",
       prop: "contactPhone",
+      minWidth: 120
+    },
+    {
+      label: "管理员账号",
+      prop: "adminUsername",
       minWidth: 120
     },
     {
@@ -118,7 +129,6 @@ export function useTenantList() {
           }
         );
         setTimeout(() => {
-          debugger
           changeCompanyStatus({
             id: row.id,
             status: row.status
@@ -180,41 +190,50 @@ export function useTenantList() {
   };
 
   function openDialog(title = "新增", row?: FormItemProps) {
+    const defaultFormInline = {
+      title: "新增",
+      id: null,
+      /** 公司简称 */
+      abbr: "",
+      /** 公司名 */
+      name: "",
+      /** 区域ID */
+      regionId: 0,
+      /** 通信地址 */
+      address: "",
+      /** 公司社会统一信用代码 */
+      uscc: "",
+      /** 法人姓名 */
+      legalPerson: "",
+      /** 联系人 */
+      contactName: "",
+      /** 联系电话 */
+      contactPhone: "",
+      /** 邮箱 */
+      email: "",
+      /** 账号额度 */
+      accountCount: 10,
+      /** 绑定域名 */
+      website: "",
+      /** 租户套餐 */
+      packageId: 0,
+      /** 公司管理员 */
+      adminUserId: null,
+      /** 备注 */
+      remark: ""
+    };
+
     addDialog({
       title: `${title}公司`,
       props: {
         formInline: {
+          ...defaultFormInline,
           title,
-          id: row?.id ?? "",
-          /** 公司简称 */
-          abbr: row?.abbr ?? "",
-          /** 公司名 */
-          name: row?.name ?? "",
-          /** 公司社会统一信用代码 */
-          uscc: row?.uscc ?? "",
-          /** 联系人 */
-          contactName: row?.contactName ?? "",
-          /** 联系电话 */
-          contactPhone: row?.contactPhone ?? "",
-          /** 邮箱 */
-          email: row?.email ?? "",
-          /** 账号额度 */
-          accountCount: row?.accountCount ?? "",
-          /** 绑定域名 */
-          website: row?.website ?? "",
-          /** 通信地址 */
-          address: row?.address ?? "",
-          /** 租户套餐 */
-          packageId: row?.packageId ?? "",
-          /** 备注 */
-          remark: row?.remark ?? "",
-          /** 账号 */
-          username: row?.username ?? "",
-          /** 密码 */
-          password: row?.password ?? ""
+          ...(row || {})
         }
       },
       width: "32%",
+      top: "5vh",
       draggable: true,
       fullscreen: deviceDetection(),
       fullscreenIcon: true,

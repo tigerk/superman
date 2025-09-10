@@ -3,6 +3,7 @@ import { ref, onMounted } from "vue";
 import { formRules } from "./utils/rule";
 import { FormProps } from "./utils/types";
 import { getCompanyPackageSimple } from "@/api/system";
+import RegionCascader from "@/components/Business/RegionCascader.vue";
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
@@ -11,8 +12,14 @@ const props = withDefaults(defineProps<FormProps>(), {
     abbr: "",
     /** 公司名 */
     name: "",
+    /** 区域ID */
+    regionId: 0,
+    /** 通信地址 */
+    address: "",
     /** 公司社会统一信用代码 */
     uscc: "",
+    /** 法人姓名 */
+    legalPerson: "",
     /** 联系人 */
     contactName: "",
     /** 联系电话 */
@@ -20,23 +27,20 @@ const props = withDefaults(defineProps<FormProps>(), {
     /** 邮箱 */
     email: "",
     /** 账号额度 */
-    accountCount: 10,
+    accountCount: 99,
     /** 绑定域名 */
     website: "",
-    /** 通信地址 */
-    address: "",
     /** 租户套餐 */
     packageId: 0,
+    /** 公司管理员 */
+    adminUserId: 0,
     /** 备注 */
-    remark: "",
-    /** 账号 */
-    username: "",
-    /** 密码 */
-    password: ""
+    remark: ""
   })
 });
 
-const options = ref([]);
+const packageOptions = ref([]);
+const userOptions = ref([]);
 const ruleFormRef = ref();
 const newFormInline = ref(props.formInline);
 
@@ -45,7 +49,8 @@ function getRef() {
 }
 
 onMounted(async () => {
-  options.value = (await getCompanyPackageSimple()).data;
+  packageOptions.value = (await getCompanyPackageSimple()).data;
+  userOptions.value = (await getCompanyPackageSimple()).data;
 });
 
 defineExpose({ getRef });
@@ -74,6 +79,18 @@ defineExpose({ getRef });
       />
     </el-form-item>
 
+    <el-form-item label="选择区域" class="el-form-item" prop="regionId">
+      <RegionCascader v-model="newFormInline.regionId" />
+    </el-form-item>
+
+    <el-form-item label="法定代表人" prop="legalPerson">
+      <el-input
+        v-model="newFormInline.legalPerson"
+        clearable
+        placeholder="请输入法定代表人"
+      />
+    </el-form-item>
+
     <el-form-item label="公司套餐" prop="packageId">
       <el-select
         v-model="newFormInline.packageId"
@@ -82,7 +99,7 @@ defineExpose({ getRef });
         class="w-full!"
       >
         <el-option
-          v-for="(option, index) in options"
+          v-for="(option, index) in packageOptions"
           :key="index"
           :label="option.name"
           :value="option.id"
@@ -98,7 +115,7 @@ defineExpose({ getRef });
       />
     </el-form-item>
 
-    <el-form-item label="联系电话" prop="contactMobile">
+    <el-form-item label="联系电话" prop="contactPhone">
       <el-input
         v-model="newFormInline.contactPhone"
         clearable
@@ -106,22 +123,28 @@ defineExpose({ getRef });
       />
     </el-form-item>
 
-    <el-form-item v-if="newFormInline.title === '新增'" label="用户名称">
+    <el-form-item label="通信地址" prop="address">
       <el-input
-        v-model="newFormInline.username"
+        v-model="newFormInline.address"
         clearable
-        placeholder="请输入用户名称"
+        placeholder="请输入通信地址"
       />
     </el-form-item>
 
-    <el-form-item v-if="newFormInline.title === '新增'" label="用户密码">
-      <el-input
-        v-model="newFormInline.password"
+    <el-form-item label="管理员" prop="adminUserId">
+      <el-select
+        v-model="newFormInline.adminUserId"
+        placeholder="请选择管理员"
         clearable
-        type="password"
-        show-password
-        placeholder="请输入用户密码"
-      />
+        class="w-full!"
+      >
+        <el-option
+          v-for="(option, index) in packageOptions"
+          :key="index"
+          :label="option.name"
+          :value="option.id"
+        />
+      </el-select>
     </el-form-item>
 
     <el-form-item label="账号额度" prop="accountCount">
@@ -131,6 +154,14 @@ defineExpose({ getRef });
         :min="0"
         :max="9999"
         controls-position="right"
+      />
+    </el-form-item>
+
+    <el-form-item label="信用代码" prop="uscc">
+      <el-input
+        v-model="newFormInline.website"
+        clearable
+        placeholder="请输入公司社会统一信用代码"
       />
     </el-form-item>
 
