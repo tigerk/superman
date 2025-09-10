@@ -57,6 +57,11 @@ export function useTenantList() {
       minWidth: 120
     },
     {
+      label: "账号额度",
+      prop: "accountCount",
+      minWidth: 120
+    },
+    {
       label: "联系人",
       prop: "contactName",
       minWidth: 120
@@ -198,7 +203,7 @@ export function useTenantList() {
       /** 公司名 */
       name: "",
       /** 区域ID */
-      regionId: 0,
+      regionId: null,
       /** 通信地址 */
       address: "",
       /** 公司社会统一信用代码 */
@@ -216,11 +221,13 @@ export function useTenantList() {
       /** 绑定域名 */
       website: "",
       /** 租户套餐 */
-      packageId: 0,
+      packageId: null,
       /** 公司管理员 */
       adminUserId: null,
       /** 备注 */
-      remark: ""
+      remark: "",
+      /** 公司性质 1：企业 2：个人 */
+      nature: 1
     };
 
     addDialog({

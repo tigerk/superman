@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import { formRules } from "./utils/rule";
 import { FormProps } from "./utils/types";
-import { getCompanyPackageSimple } from "@/api/system";
+import { getCompanyPackageSimple, getCompanyUserSimple } from "@/api/system";
 import RegionCascader from "@/components/Business/RegionCascader.vue";
 
 const props = withDefaults(defineProps<FormProps>(), {
@@ -13,7 +13,7 @@ const props = withDefaults(defineProps<FormProps>(), {
     /** 公司名 */
     name: "",
     /** 区域ID */
-    regionId: 0,
+    regionIds: null,
     /** 通信地址 */
     address: "",
     /** 公司社会统一信用代码 */
@@ -31,11 +31,13 @@ const props = withDefaults(defineProps<FormProps>(), {
     /** 绑定域名 */
     website: "",
     /** 租户套餐 */
-    packageId: 0,
+    packageId: null,
     /** 公司管理员 */
-    adminUserId: 0,
+    adminUserId: null,
     /** 备注 */
-    remark: ""
+    remark: "",
+    /** 公司性质 1：企业 2：个人 */
+    nature: 1
   })
 });
 
@@ -50,7 +52,7 @@ function getRef() {
 
 onMounted(async () => {
   packageOptions.value = (await getCompanyPackageSimple()).data;
-  userOptions.value = (await getCompanyPackageSimple()).data;
+  userOptions.value = (await getCompanyUserSimple()).data;
 });
 
 defineExpose({ getRef });
@@ -71,16 +73,25 @@ defineExpose({ getRef });
       />
     </el-form-item>
 
-    <el-form-item label="公司简称" prop="abbr">
-      <el-input
-        v-model="newFormInline.abbr"
-        clearable
-        placeholder="请输入公司简称"
-      />
-    </el-form-item>
+    <div class="flex gap-4">
+      <el-form-item label="公司简称" prop="abbr" class="flex-1">
+        <el-input
+          v-model="newFormInline.abbr"
+          clearable
+          placeholder="请输入公司简称"
+        />
+      </el-form-item>
+
+      <el-form-item label="公司性质" prop="nature" class="flex-1">
+        <el-radio-group v-model="newFormInline.nature">
+          <el-radio-button :value="1">企业</el-radio-button>
+          <el-radio-button :value="2">个人</el-radio-button>
+        </el-radio-group>
+      </el-form-item>
+    </div>
 
     <el-form-item label="选择区域" class="el-form-item" prop="regionId">
-      <RegionCascader v-model="newFormInline.regionId" />
+      <RegionCascader v-model="newFormInline.regionIds" />
     </el-form-item>
 
     <el-form-item label="法定代表人" prop="legalPerson">
@@ -139,7 +150,7 @@ defineExpose({ getRef });
         class="w-full!"
       >
         <el-option
-          v-for="(option, index) in packageOptions"
+          v-for="(option, index) in userOptions"
           :key="index"
           :label="option.name"
           :value="option.id"
@@ -159,7 +170,7 @@ defineExpose({ getRef });
 
     <el-form-item label="信用代码" prop="uscc">
       <el-input
-        v-model="newFormInline.website"
+        v-model="newFormInline.uscc"
         clearable
         placeholder="请输入公司社会统一信用代码"
       />

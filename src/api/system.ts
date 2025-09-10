@@ -175,6 +175,10 @@ export const saveCompanyPackageMenus = (data?: object) => {
 export const getCompanyPackageSimple = () => {
   return http.request<Result>(
     "post",
-    baseUrlApi("/company/package/list/simple")
+    baseUrlApi("company/package/list/simple")
   );
+};
+
+export const getCompanyUserSimple = () => {
+  return http.request<Result>("get", baseUrlApi("company/user/list/simple"));
 };
