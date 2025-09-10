@@ -70,6 +70,12 @@ type ResultTable = {
   };
 };
 
+type Result = {
+  code: number;
+  message: string;
+  data?: any;
+};
+
 /** 登录 */
 export const getLogin = (data?: object) => {
   return http.request<UserResult>("post", baseUrlApi("login"), { data });
@@ -77,7 +83,9 @@ export const getLogin = (data?: object) => {
 
 /** 刷新`token` */
 export const refreshTokenApi = (data?: object) => {
-  return http.request<RefreshTokenResult>("post", baseUrlApi("token/refresh"), { data });
+  return http.request<RefreshTokenResult>("post", baseUrlApi("token/refresh"), {
+    data
+  });
 };
 
 /** 账户设置-个人信息 */
@@ -88,4 +96,38 @@ export const getMine = (data?: object) => {
 /** 账户设置-个人安全日志 */
 export const getMineLogs = (data?: object) => {
   return http.request<ResultTable>("get", "/mine-logs", { data });
+};
+
+/** 获取系统管理-用户管理列表 */
+export const getUserList = (data?: object) => {
+  return http.request<ResultTable>("post", baseUrlApi("user/list"), { data });
+};
+
+/** 创建用户信息 */
+export const createUser = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("user/create"), { data });
+};
+
+/** 更新用户信息 */
+export const updateUser = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("user/update"), { data });
+};
+
+/** 更新用户信息 */
+export const updateUserStatus = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("user/updateStatus"), {
+    data
+  });
+};
+
+export const resetUserPassword = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("user/resetPassword"), {
+    data
+  });
+};
+
+export const updateUserAvatar = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("user/updateAvatar"), {
+    data
+  });
 };

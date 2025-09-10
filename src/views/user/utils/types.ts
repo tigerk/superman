@@ -9,11 +9,8 @@ interface FormItemProps {
   phone: string | number;
   email: string;
   gender: string | number;
+  userType: number;
   status: number;
-  dept?: {
-    id?: number;
-    name?: string;
-  };
   remark: string;
 }
 interface FormProps {

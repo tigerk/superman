@@ -1,5 +1,5 @@
 {
-  "Version": "6.0.0",
+  "Version": "6.1.0",
   "Title": "superman",
   "FixedHeader": true,
   "HiddenSideBar": false,
@@ -13,7 +13,7 @@
   "Grey": false,
   "Weak": false,
   "HideTabs": false,
-  "HideFooter": false,
+  "HideFooter": true,
   "Stretch": false,
   "SidebarStatus": true,
   "EpThemeColor": "#409EFF",
