@@ -3,6 +3,11 @@
 [vue-pure-admin-max](https://github.com/xiaoxian521/vue-pure-admin-max) 仅供购买者（个人、公司）使用且使用者不可售卖或公开源代码，违者追究法律责任、踢出此私有仓库且不退购买费！  
 注：若购买者在公司使用了 [vue-pure-admin-max](https://github.com/xiaoxian521/vue-pure-admin-max)，离职后，公司也不可售卖或公开源代码，违者追究其公司法律责任，最高面临`5万元`罚款！
 
+## 视频教程
+
+- [点击查看Max版本如何精简代码](https://www.alipan.com/s/gzZwZey6L52)
+- 视频提取码: `v7r3`
+
 ## `vue-pure-admin-max` 与 `vue-pure-admin` 的区别是什么？
 
 答：`vue-pure-admin-max` 在保留 [vue-pure-admin](https://github.com/pure-admin/vue-pure-admin) 所有功能基础上，再添加更多高级功能，每个高级功能仅一个提交记录，方便用户同步代码，具体有哪些高级功能请看 [vue-pure-admin-max 高级功能](https://github.com/pure-admin/vue-pure-admin-max?tab=readme-ov-file#vue-pure-admin-max-%E4%B8%8E-vue-pure-admin-%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E5%A6%82%E4%BD%95%E6%8B%A5%E6%9C%89-max-%E7%89%88%E6%9C%AC)  
@@ -18,6 +23,7 @@
 | 字典管理                           | 已完成   | [添加字典管理](https://github.com/xiaoxian521/vue-pure-admin-max/commit/d25cc87f5f959a5d7ab84ffd55b37104b4a26923)                       |
 | 多租户管理                         | 已完成   | [添加多租户管理](https://github.com/xiaoxian521/vue-pure-admin-max/commit/2098e330be672222ce4dd1cc0c769b56479cf550)                     |
 | 页头添加整体风格快捷操作按钮       | 已完成   | [页头添加整体风格快捷操作按钮](https://github.com/xiaoxian521/vue-pure-admin-max/commit/a7ea87a1773295970a44726b4231bd3b607c8d01)       |
+| 日历排班功能                       | 已完成   | [添加日历排班](https://github.com/xiaoxian521/vue-pure-admin-max/commit/f741566169ebc5b142ebf5ec67a1be89f08eeec3)                       |
 
 ## 高级功能 `bug` 修复记录
 
