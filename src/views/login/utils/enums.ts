@@ -2,11 +2,14 @@ import { $t } from "@/plugins/i18n";
 
 const operates = [
   // {
-  //   title: "验证码登录"
+  //   title: $t("login.purePhoneLogin")
   // },
   // {
   //   title: $t("login.pureQRCodeLogin")
-  // }
+  // },
+  {
+    title: $t("login.pureRegister")
+  }
 ];
 
 const thirdParty = [

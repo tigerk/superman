@@ -131,3 +131,13 @@ export const updateUserAvatar = (data?: object) => {
     data
   });
 };
+
+export const sendSmsCode = (data?: object) => {
+  return http.request<UserResult>("post", baseUrlApi("login/sms/send"), {
+    params: data
+  });
+};
+
+export const loginUpdate = (data?: object) => {
+  return http.request<UserResult>("post", baseUrlApi("login/update"), { data });
+};
