@@ -9,9 +9,11 @@ import { useVerifyCode } from "../utils/verifyCode";
 import { $t, transformI18n } from "@/plugins/i18n";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Lock from "~icons/ri/lock-fill";
+import User from "~icons/ri/user-3-fill";
 import Phone from "~icons/ri/phone-fill";
+import Mail from "~icons/ri/mail-fill";
 import Shield from "~icons/ri/shield-keyhole-line";
-import { loginUpdate, sendSmsCode } from "@/api/user";
+import { sendSmsCode } from "@/api/user";
 
 const { t } = useI18n();
 const emit = defineEmits<{
@@ -23,12 +25,14 @@ const loading = ref(false);
 const ruleFormRef = ref<FormInstance>();
 const { isDisabled, text } = useVerifyCode();
 
-// 忘记密码表单
-const forgotForm = reactive({
+// 注册表单
+const registerForm = reactive({
+  username: "",
   phone: "",
-  verifyCode: "",
+  email: "",
   password: "",
-  confirmPassword: ""
+  confirmPassword: "",
+  verifyCode: ""
 });
 
 // 确认密码验证规则
@@ -37,7 +41,7 @@ const repeatPasswordRule = [
     validator: (rule, value, callback) => {
       if (value === "") {
         callback(new Error(transformI18n($t("login.purePassWordSureReg"))));
-      } else if (forgotForm.password !== value) {
+      } else if (registerForm.password !== value) {
         callback(
           new Error(transformI18n($t("login.purePassWordDifferentReg")))
         );
@@ -49,24 +53,18 @@ const repeatPasswordRule = [
   }
 ];
 
-// 重置密码处理
-const onUpdate = async (formEl: FormInstance | undefined) => {
+// 注册处理
+const onRegister = async (formEl: FormInstance | undefined) => {
   loading.value = true;
   if (!formEl) return;
   await formEl.validate(valid => {
     if (valid) {
-      // 模拟重置密码请求
-      loginUpdate({
-        phone: forgotForm.phone,
-        verifyCode: forgotForm.verifyCode,
-        password: forgotForm.password
-      }).then(resp => {
-        message(transformI18n($t("login.purePassWordUpdateReg")), {
-          type: "success"
-        });
+      // 模拟注册请求
+      setTimeout(() => {
+        message("注册成功", { type: "success" });
         emit("switchPage", "login");
         loading.value = false;
-      });
+      }, 1500);
     } else {
       loading.value = false;
     }
@@ -90,7 +88,7 @@ const sendVerificationCode = async (
     emit("showImageVerify", () => {
       // 图形验证码验证成功后的回调
       sendSmsCode({
-        phone: forgotForm.phone
+        phone: registerForm.phone
       }).then(resp => {
         // 模拟发送验证码
         useVerifyCode().start(ruleFormRef.value, "phone", 60);
@@ -107,21 +105,45 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <Motion key="forgot">
+  <Motion key="register">
     <div class="form-header">
-      <h1 class="form-title">重置密码</h1>
-      <p class="form-subtitle">输入您的手机号重置密码</p>
+      <h1 class="form-title">创建账户</h1>
+      <p class="form-subtitle">注册新账户开始使用</p>
     </div>
 
     <el-form
       ref="ruleFormRef"
-      :model="forgotForm"
+      :model="registerForm"
       :rules="updateRules"
       class="auth-form"
     >
+      <el-form-item
+        :rules="[
+          {
+            required: true,
+            message: transformI18n($t('login.pureUsernameReg')),
+            trigger: 'blur'
+          }
+        ]"
+        prop="username"
+      >
+        <el-input
+          v-model="registerForm.username"
+          size="large"
+          clearable
+          placeholder="用户名"
+        >
+          <template #prefix>
+            <el-icon>
+              <User />
+            </el-icon>
+          </template>
+        </el-input>
+      </el-form-item>
+
       <el-form-item prop="phone">
         <el-input
-          v-model="forgotForm.phone"
+          v-model="registerForm.phone"
           size="large"
           clearable
           placeholder="手机号"
@@ -137,7 +159,7 @@ onBeforeUnmount(() => {
       <el-form-item prop="verifyCode">
         <div class="verify-code-wrapper">
           <el-input
-            v-model="forgotForm.verifyCode"
+            v-model="registerForm.verifyCode"
             size="large"
             clearable
             placeholder="验证码"
@@ -160,10 +182,10 @@ onBeforeUnmount(() => {
 
       <el-form-item prop="password">
         <el-input
-          v-model="forgotForm.password"
+          v-model="registerForm.password"
           size="large"
           type="password"
-          placeholder="新密码"
+          placeholder="设置密码"
         >
           <template #prefix>
             <el-icon>
@@ -175,10 +197,10 @@ onBeforeUnmount(() => {
 
       <el-form-item :rules="repeatPasswordRule" prop="confirmPassword">
         <el-input
-          v-model="forgotForm.confirmPassword"
+          v-model="registerForm.confirmPassword"
           size="large"
           type="password"
-          placeholder="确认新密码"
+          placeholder="确认密码"
         >
           <template #prefix>
             <el-icon>
@@ -193,15 +215,15 @@ onBeforeUnmount(() => {
         size="large"
         class="submit-btn"
         :loading="loading"
-        @click="onUpdate(ruleFormRef)"
-        >重置密码</el-button
+        @click="onRegister(ruleFormRef)"
+        >注 册</el-button
       >
 
       <div class="switch-page">
         <el-space>
-          <span>想起密码了？</span>
+          <span>已有账户？</span>
           <el-button link type="primary" @click="emit('switchPage', 'login')"
-            >返回登录</el-button
+            >立即登录</el-button
           >
         </el-space>
       </div>
