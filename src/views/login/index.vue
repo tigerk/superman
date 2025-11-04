@@ -311,8 +311,16 @@ useEventListener(document, "keydown", ({ code }) => {
               </linearGradient>
             </defs>
 
-            <!-- 主圆圈 -->
-            <circle cx="250" cy="200" r="80" fill="url(#grad1)" opacity="0.1">
+            <!-- 背景圆圈 -->
+            <circle cx="250" cy="200" r="100" fill="url(#grad1)" opacity="0.1">
+              <animate
+                attributeName="r"
+                values="100;120;100"
+                dur="4s"
+                repeatCount="indefinite"
+              />
+            </circle>
+            <circle cx="250" cy="200" r="80" fill="url(#grad1)" opacity="0.2">
               <animate
                 attributeName="r"
                 values="80;90;80"
@@ -320,7 +328,7 @@ useEventListener(document, "keydown", ({ code }) => {
                 repeatCount="indefinite"
               />
             </circle>
-            <circle cx="250" cy="200" r="60" fill="url(#grad1)" opacity="0.2">
+            <circle cx="250" cy="200" r="60" fill="url(#grad1)" opacity="0.3">
               <animate
                 attributeName="r"
                 values="60;70;60"
@@ -328,17 +336,25 @@ useEventListener(document, "keydown", ({ code }) => {
                 repeatCount="indefinite"
               />
             </circle>
-            <circle cx="250" cy="200" r="40" fill="url(#grad1)" opacity="0.3">
+
+            <!-- 动态波浪 -->
+            <path
+              d="M0,200 Q125,150 250,200 T500,200"
+              stroke="url(#grad2)"
+              stroke-width="4"
+              fill="none"
+              opacity="0.5"
+            >
               <animate
-                attributeName="r"
-                values="40;45;40"
+                attributeName="d"
+                values="M0,200 Q125,150 250,200 T500,200; M0,200 Q125,250 250,200 T500,200"
                 dur="4s"
                 repeatCount="indefinite"
               />
-            </circle>
+            </path>
 
             <!-- 数据点 -->
-            <circle cx="180" cy="150" r="4" fill="#EF4444">
+            <circle cx="180" cy="150" r="6" fill="#EF4444">
               <animate
                 attributeName="opacity"
                 values="0;1;0"
@@ -346,7 +362,7 @@ useEventListener(document, "keydown", ({ code }) => {
                 repeatCount="indefinite"
               />
             </circle>
-            <circle cx="320" cy="170" r="4" fill="#DC2626">
+            <circle cx="320" cy="170" r="6" fill="#DC2626">
               <animate
                 attributeName="opacity"
                 values="0;1;0"
@@ -355,7 +371,7 @@ useEventListener(document, "keydown", ({ code }) => {
                 repeatCount="indefinite"
               />
             </circle>
-            <circle cx="290" cy="250" r="4" fill="#F87171">
+            <circle cx="290" cy="250" r="6" fill="#F87171">
               <animate
                 attributeName="opacity"
                 values="0;1;0"
@@ -364,7 +380,7 @@ useEventListener(document, "keydown", ({ code }) => {
                 repeatCount="indefinite"
               />
             </circle>
-            <circle cx="210" cy="240" r="4" fill="#B91C1C">
+            <circle cx="210" cy="240" r="6" fill="#B91C1C">
               <animate
                 attributeName="opacity"
                 values="0;1;0"
