@@ -1,5 +1,5 @@
 import { http } from "@/utils/http";
-import { baseUrlApi } from "./utils";
+import { baseUrlApi } from "../utils";
 
 export type UserResult = {
   code: number;

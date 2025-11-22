@@ -4994,7 +4994,7 @@ var Module = typeof Module != "undefined" ? Module : {};
       var exportTypedArrayMethod = ArrayBufferViewCore.exportTypedArrayMethod;
       var $sort = [].sort;
 
-      // `%TypedArray%.prototype.sort` method
+      // `%TypedArray%.prototype.sortOrder` method
       // https://tc39.github.io/ecma262/#sec-%typedarray%.prototype.sort
       exportTypedArrayMethod("sort", function sort(comparefn) {
         return $sort.call(aTypedArray(this), comparefn);

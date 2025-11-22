@@ -1,14 +1,14 @@
 import editForm from "../form.vue";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
-import { deleteMenu, getMenuList } from "@/api/menu";
+import { deleteMenu, getMenuList } from "@/api/platform/menu";
 import { transformI18n } from "@/plugins/i18n";
 import { addDialog } from "@/components/ReDialog/index";
 import { reactive, ref, onMounted, h } from "vue";
 import type { FormItemProps } from "./types";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { cloneDeep, isAllEmpty, deviceDetection } from "@pureadmin/utils";
-import { createMenu } from "@/api/menu";
+import { createMenu } from "@/api/platform/menu";
 
 export function useMenu() {
   const form = reactive({
@@ -63,14 +63,16 @@ export function useMenu() {
       )
     },
     {
+      label: "路由名称",
+      prop: "name"
+    },
+    {
       label: "路由路径",
       prop: "path"
     },
     {
       label: "组件路径",
-      prop: "component",
-      formatter: ({ path, component }) =>
-        isAllEmpty(component) ? path : component
+      prop: "component"
     },
     {
       label: "权限标识",
@@ -79,16 +81,6 @@ export function useMenu() {
     {
       label: "排序",
       prop: "rank",
-      width: 100
-    },
-    {
-      label: "平台菜单",
-      prop: "isPlatform",
-      cellRenderer: ({ row, props }) => (
-        <el-tag type={row.isPlatform ? "danger" : "primary"} effect="plain">
-          {row.isPlatform ? "是" : "否"}
-        </el-tag>
-      ),
       width: 100
     },
     {
