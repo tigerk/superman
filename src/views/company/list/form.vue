@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import { formRules } from "./utils/rule";
 import { FormProps } from "./utils/types";
-import { getCompanyPackageSimple, getCompanyUserSimple } from "@/api/system";
+import { getCompanyPackageSimple, getCompanyUserSimple } from "@/api/platform/system";
 import RegionCascader from "@/components/Business/RegionCascader.vue";
 import ReCol from "@/components/ReCol";
 

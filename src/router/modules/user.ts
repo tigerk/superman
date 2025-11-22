@@ -1,7 +1,7 @@
 export default {
   path: "/user/index",
   name: "User",
-  component: () => import("@/views/user/index.vue"),
+  component: () => import("@/views/platform/user/index.vue"),
   meta: {
     icon: "ep/set-up",
     title: "用户管理",

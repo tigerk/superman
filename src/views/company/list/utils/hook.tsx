@@ -7,7 +7,7 @@ import {
   changeCompanyStatus,
   createCompany,
   getCompanyList
-} from "@/api/system";
+} from "@/api/platform/system";
 import { addDialog } from "@/components/ReDialog/index";
 import { deviceDetection } from "@pureadmin/utils";
 import type { FormItemProps } from "./types";

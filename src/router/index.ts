@@ -43,11 +43,7 @@ import {
  * 如何排除文件请看：https://cn.vitejs.dev/guide/features.html#negative-patterns
  */
 const modules: Record<string, any> = import.meta.glob(
-  [
-    "./modules/**/home.ts",
-    "./modules/**/user.ts",
-    "!./modules/**/remaining.ts"
-  ],
+  ["./modules/**/home.ts", "!./modules/**/remaining.ts"],
   {
     eager: true
   }
@@ -199,15 +195,15 @@ router.beforeEach((to: ToRouteType, _from, next) => {
       toCorrectRoute();
     }
   } else {
-    if (to.path !== "/login") {
-      if (whiteList.indexOf(to.path) !== -1) {
-        next();
-      } else {
+    if (to.path === "/login") {
+      next();
+    } else {
+      if (whiteList.indexOf(to.path) === -1) {
         removeToken();
         next({ path: "/login" });
+      } else {
+        next();
       }
-    } else {
-      next();
     }
   }
 });
