@@ -83,3 +83,9 @@ export const updateUserAvatar = (data?: object) => {
     data
   });
 };
+
+export const updateUserRole = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("user/role/update"), {
+    data
+  });
+};
