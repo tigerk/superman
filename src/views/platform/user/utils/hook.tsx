@@ -4,42 +4,43 @@ import editForm from "../form/index.vue";
 import { zxcvbn } from "@zxcvbn-ts/core";
 import { message } from "@/utils/message";
 import userAvatar from "@/assets/user.jpg";
-import { usePublicHooks } from "../../../../utils/publicHooks";
-import { addDialog } from "@/components/ReDialog/index";
+import { usePublicHooks } from "@/utils/publicHooks";
+import { addDialog } from "@/components/ReDialog";
 import type { PaginationProps } from "@pureadmin/table";
 import ReCropperPreview from "@/components/ReCropperPreview";
 import type { FormItemProps } from "./types";
 import {
+  deviceDetection,
   getKeyList,
-  isAllEmpty,
   hideTextAtIndex,
-  deviceDetection
+  isAllEmpty
 } from "@pureadmin/utils";
 import {
   ElForm,
-  ElInput,
   ElFormItem,
-  ElProgress,
-  ElMessageBox
+  ElInput,
+  ElMessageBox,
+  ElProgress
 } from "element-plus";
 import {
-  type Ref,
-  h,
-  ref,
-  toRaw,
-  watch,
   computed,
+  h,
+  onMounted,
   reactive,
-  onMounted
+  ref,
+  type Ref,
+  toRaw,
+  watch
 } from "vue";
 import {
   createUser,
+  deleteUser,
   getUserList,
-  updateUser,
   resetUserPassword,
-  updateUserStatus,
-  updateUserAvatar
-} from "@/api/platform/login";
+  updateUser,
+  updateUserAvatar,
+  updateUserStatus
+} from "@/api/platform/user";
 
 export function useUser(tableRef: Ref) {
   const form = reactive({
@@ -102,7 +103,7 @@ export function useUser(tableRef: Ref) {
       cellRenderer: ({ row, props }) => (
         <el-tag
           size={props.size}
-          type={row.gender === 1 ? "danger" : null}
+          type={row.gender === 1 ? "success" : "danger"}
           effect="plain"
         >
           {row.gender === 1 ? "男" : "女"}
@@ -120,7 +121,7 @@ export function useUser(tableRef: Ref) {
       prop: "userType",
       minWidth: 90,
       formatter: ({ userType }) => {
-        return userType == 10 ? "平台管理员" : "公司用户";
+        return userType === 10 ? "超级管理员" : "普通用户";
       }
     },
     {
@@ -232,8 +233,37 @@ export function useUser(tableRef: Ref) {
   }
 
   function handleDelete(row) {
-    message(`您删除了用户编号为${row.id}的这条数据`, { type: "success" });
-    onPlatformUserSearch();
+    ElMessageBox.confirm(
+      `确认要删除用户编号为${row.phone}的这条数据吗?`,
+      "系统提示",
+      {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        dangerouslyUseHTMLString: true,
+        draggable: true
+      }
+    )
+      .then(() => {
+        deleteUser([row.id]).then(resp => {
+          if (resp.code === 0) {
+            message(`您删除了用户编号为${row.phone}的这条数据`, {
+              type: "success"
+            });
+
+            onPlatformUserSearch().then(r => console.log(r));
+          } else {
+            message(resp.message, {
+              type: "error"
+            });
+          }
+        });
+      })
+      .catch(() => {
+        message("已取消删除用户", {
+          type: "info"
+        });
+      });
   }
 
   function handleSizeChange(val: number) {
@@ -291,7 +321,7 @@ export function useUser(tableRef: Ref) {
     onPlatformUserSearch().then(r => console.log(r));
   };
 
-  function openDialog(title = "新增", row?: FormItemProps) {
+  function openUserCreateDialog(title = "新增", row?: FormItemProps) {
     addDialog({
       title: `${title}用户`,
       props: {
@@ -299,18 +329,18 @@ export function useUser(tableRef: Ref) {
           id: row?.id ?? null,
           title,
           nickname: row?.nickname ?? "",
-          username: row?.username ?? "",
           password: row?.password ?? "",
           phone: row?.phone ?? "",
           email: row?.email ?? "",
-          gender: row?.gender ?? "",
-          userType: row?.userType ?? 20,
+          gender: row?.gender ?? 1,
           status: row?.status ?? 1,
           remark: row?.remark ?? ""
         }
       },
-      width: "46%",
+      width: "35%",
       draggable: true,
+      lockScroll: true,
+      alignCenter: true,
       fullscreen: deviceDetection(),
       fullscreenIcon: true,
       closeOnClickModal: false,
@@ -322,7 +352,7 @@ export function useUser(tableRef: Ref) {
         function submitCreateForm() {
           createUser(curData).then(resp => {
             if (resp.code === 0) {
-              message(`您${title}了用户名称为${curData.username}的这条数据`, {
+              message(`您${title}了用户手机号为${curData.phone}的这条数据`, {
                 type: "success"
               });
               done(); // 关闭弹框
@@ -338,7 +368,7 @@ export function useUser(tableRef: Ref) {
         function submitUpdateForm() {
           updateUser(curData).then(resp => {
             if (resp.code === 0) {
-              message(`您${title}了用户名称为${curData.username}的这条数据`, {
+              message(`您${title}了用户手机号为${curData.phone}的这条数据`, {
                 type: "success"
               });
               done(); // 关闭弹框
@@ -511,11 +541,11 @@ export function useUser(tableRef: Ref) {
     selectedNum,
     pagination,
     buttonClass,
+    onPlatformUserSearch,
     deviceDetection,
-    onSearch: onPlatformUserSearch,
+    openUserCreateDialog,
     resetForm,
     onBatchDelete,
-    openDialog,
     handleUpdate,
     handleDelete,
     handleUpload,

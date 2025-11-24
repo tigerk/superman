@@ -8,6 +8,7 @@ import Upload from "~icons/ri/upload-line";
 import Password from "~icons/ri/lock-password-line";
 import More from "~icons/ep/more-filled";
 import EditPen from "~icons/ep/edit-pen";
+import Delete from "~icons/ep/delete";
 import Refresh from "~icons/ep/refresh";
 import AddFill from "~icons/ri/add-circle-line";
 
@@ -27,10 +28,10 @@ const {
   pagination,
   buttonClass,
   deviceDetection,
-  onSearch,
+  onPlatformUserSearch,
   resetForm,
   onBatchDelete,
-  openDialog,
+  openUserCreateDialog,
   handleUpdate,
   handleDelete,
   handleUpload,
@@ -83,7 +84,7 @@ const {
             type="primary"
             :icon="useRenderIcon('ri:search-line')"
             :loading="loading"
-            @click="onSearch"
+            @click="onPlatformUserSearch"
           >
             搜索
           </el-button>
@@ -93,12 +94,16 @@ const {
         </el-form-item>
       </el-form>
 
-      <PureTableBar title="用户管理" :columns="columns" @refresh="onSearch">
+      <PureTableBar
+        title="用户管理"
+        :columns="columns"
+        @refresh="onPlatformUserSearch"
+      >
         <template #buttons>
           <el-button
             type="primary"
             :icon="useRenderIcon(AddFill)"
-            @click="openDialog()"
+            @click="openUserCreateDialog()"
           >
             新增用户
           </el-button>
@@ -131,9 +136,19 @@ const {
                 type="primary"
                 :size="size"
                 :icon="useRenderIcon(EditPen)"
-                @click="openDialog('修改', row)"
+                @click="openUserCreateDialog('修改', row)"
               >
                 修改
+              </el-button>
+              <el-button
+                class="reset-margin"
+                link
+                type="primary"
+                :size="size"
+                :icon="useRenderIcon(Delete)"
+                @click="handleDelete(row)"
+              >
+                删除
               </el-button>
               <el-dropdown>
                 <el-button

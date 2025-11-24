@@ -3,7 +3,7 @@ import { ref } from "vue";
 import ReCol from "@/components/ReCol";
 import { formRules } from "../utils/rule";
 import { FormProps } from "../utils/types";
-import { usePublicHooks } from "../../../../utils/publicHooks";
+import { usePublicHooks } from "@/utils/publicHooks";
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
@@ -33,17 +33,6 @@ const genderOptions = [
   }
 ];
 
-const userTypeOptions = [
-  {
-    value: 20,
-    label: "公司用户"
-  },
-  {
-    value: 10,
-    label: "平台管理员"
-  }
-];
-
 const ruleFormRef = ref();
 const { switchStyle } = usePublicHooks();
 const newFormInline = ref(props.formInline);
@@ -61,30 +50,15 @@ defineExpose({ getRef });
     :model="newFormInline"
     :rules="formRules"
     label-width="82px"
+    label-position="top"
   >
     <el-row :gutter="30">
-      <re-col class="p-4">
-        <el-alert type="info" show-icon :closable="false">
-          <p>
-            用户类型默认“公司用户”，设置为“平台超级管理员”可以操作平台所有功能
-          </p>
-        </el-alert>
-      </re-col>
       <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="用户名称" prop="username">
+        <el-form-item label="手机号（登录账号）" prop="phone">
           <el-input
-            v-model="newFormInline.username"
+            v-model="newFormInline.phone"
             clearable
-            placeholder="请输入用户名称"
-          />
-        </el-form-item>
-      </re-col>
-      <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="用户昵称" prop="nickname">
-          <el-input
-            v-model="newFormInline.nickname"
-            clearable
-            placeholder="请输入用户昵称"
+            placeholder="请输入手机号"
           />
         </el-form-item>
       </re-col>
@@ -102,16 +76,16 @@ defineExpose({ getRef });
           />
         </el-form-item>
       </re-col>
+
       <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="手机号" prop="phone">
+        <el-form-item label="用户昵称" prop="nickname">
           <el-input
-            v-model="newFormInline.phone"
+            v-model="newFormInline.nickname"
             clearable
-            placeholder="请输入手机号"
+            placeholder="请输入用户昵称"
           />
         </el-form-item>
       </re-col>
-
       <re-col :value="12" :xs="24" :sm="24">
         <el-form-item label="邮箱" prop="email">
           <el-input
@@ -123,36 +97,14 @@ defineExpose({ getRef });
       </re-col>
       <re-col :value="12" :xs="24" :sm="24">
         <el-form-item label="用户性别" prop="gender">
-          <el-select
-            v-model="newFormInline.gender"
-            placeholder="请选择用户性别"
-            class="w-full"
-            clearable
-          >
-            <el-option
-              v-for="(item, index) in genderOptions"
-              :key="index"
-              :label="item.label"
+          <el-radio-group v-model="newFormInline.gender" class="w-full" size="small">
+            <el-radio-button
+              v-for="item in genderOptions"
+              :key="item.value"
               :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-      </re-col>
-      <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="用户类型" prop="userType">
-          <el-select
-            v-model="newFormInline.userType"
-            placeholder="请选择用户类型"
-            class="w-full"
-            clearable
-          >
-            <el-option
-              v-for="(item, index) in userTypeOptions"
-              :key="index"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
+              >{{ item.label }}
+            </el-radio-button>
+          </el-radio-group>
         </el-form-item>
       </re-col>
       <re-col

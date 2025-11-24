@@ -4,12 +4,10 @@ interface FormItemProps {
   title: string;
   higherDeptOptions: Record<string, unknown>[];
   nickname: string;
-  username: string;
   password: string;
   phone: string | number;
   email: string;
   gender: string | number;
-  userType: number;
   status: number;
   remark: string;
 }
