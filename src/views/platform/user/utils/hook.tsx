@@ -8,7 +8,9 @@ import { usePublicHooks } from "@/utils/publicHooks";
 import { addDialog } from "@/components/ReDialog";
 import type { PaginationProps } from "@pureadmin/table";
 import ReCropperPreview from "@/components/ReCropperPreview";
-import type { FormItemProps } from "./types";
+import type { FormItemProps, RoleFormItemProps } from "./types";
+import roleForm from "../form/role.vue";
+
 import {
   deviceDetection,
   getKeyList,
@@ -41,6 +43,7 @@ import {
   updateUserAvatar,
   updateUserStatus
 } from "@/api/platform/user";
+import { getAllRoleList, getRoleIds } from "@/api/platform/role";
 
 export function useUser(tableRef: Ref) {
   const form = reactive({
@@ -53,6 +56,7 @@ export function useUser(tableRef: Ref) {
   const formRef = ref();
   const ruleFormRef = ref();
   const dataList = ref([]);
+  const roleOptions = ref([]);
   const loading = ref(true);
   // 上传头像信息
   const avatarInfo = ref();
@@ -65,6 +69,10 @@ export function useUser(tableRef: Ref) {
     currentPage: 1,
     background: true
   });
+
+  // 当前密码强度（0-4）
+  const curScore = ref();
+
   const columns: TableColumnList = [
     {
       label: "用户编号",
@@ -178,8 +186,6 @@ export function useUser(tableRef: Ref) {
     { color: "#1bbf1b", text: "强" },
     { color: "#008000", text: "非常强" }
   ];
-  // 当前密码强度（0-4）
-  const curScore = ref();
 
   function onChange({ row, index }) {
     ElMessageBox.confirm(
@@ -527,10 +533,42 @@ export function useUser(tableRef: Ref) {
     });
   }
 
+  /** 分配角色 */
+  async function handleRole(row) {
+    // 选中的角色列表
+    const ids = (await getRoleIds({ userId: row.id })).data ?? [];
+    addDialog({
+      title: `分配 ${row.username} 用户的角色`,
+      props: {
+        formInline: {
+          username: row?.username ?? "",
+          nickname: row?.nickname ?? "",
+          roleOptions: roleOptions.value ?? [],
+          ids
+        }
+      },
+      width: "400px",
+      draggable: true,
+      fullscreen: deviceDetection(),
+      fullscreenIcon: true,
+      closeOnClickModal: false,
+      contentRenderer: () => h(roleForm),
+      beforeSure: (done, { options }) => {
+        const curData = options.props.formInline as RoleFormItemProps;
+        console.log("curIds", curData.ids);
+        // 根据实际业务使用curData.ids和row里的某些字段去调用修改角色接口即可
+        done(); // 关闭弹框
+      }
+    });
+  }
+
   onMounted(async () => {
     onPlatformUserSearch().then(() => {
       console.log("加载完成");
     });
+
+    // 角色列表
+    roleOptions.value = (await getAllRoleList()).data;
   });
 
   return {
@@ -551,6 +589,7 @@ export function useUser(tableRef: Ref) {
     handleUpload,
     handleReset,
     handleSizeChange,
+    handleRole,
     onSelectionCancel,
     handleCurrentChange,
     handleSelectionChange
