@@ -1,14 +1,13 @@
 import editForm from "../form.vue";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
-import { deleteMenu, getMenuList } from "@/api/platform/menu";
+import { deleteMenu, getMenuList, createMenu } from "@/api/platform/menu";
 import { transformI18n } from "@/plugins/i18n";
-import { addDialog } from "@/components/ReDialog/index";
+import { addDialog } from "@/components/ReDialog";
 import { reactive, ref, onMounted, h } from "vue";
 import type { FormItemProps } from "./types";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { cloneDeep, isAllEmpty, deviceDetection } from "@pureadmin/utils";
-import { createMenu } from "@/api/platform/menu";
 
 export function useMenu() {
   const form = reactive({
@@ -162,8 +161,7 @@ export function useMenu() {
           hiddenTag: row?.hiddenTag ?? false,
           fixedTag: row?.fixedTag ?? false,
           showLink: row?.showLink ?? true,
-          showParent: row?.showParent ?? false,
-          isPlatform: row?.isPlatform ?? false
+          showParent: row?.showParent ?? false
         }
       },
       width: "45%",
