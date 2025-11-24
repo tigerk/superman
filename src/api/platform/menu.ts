@@ -7,31 +7,24 @@ type Result = {
   data?: Array<any>;
 };
 
-type ResultTable = {
-  code: number;
-  message: string;
-  data?: {
-    /** 列表数据 */
-    list: Array<any>;
-    /** 总条目数 */
-    total?: number;
-    /** 每页显示条目个数 */
-    pageSize?: number;
-    /** 当前页数 */
-    currentPage?: number;
-  };
-};
-
 export const createMenu = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("sys/menu/create"), { data });
+  return http.request<Result>("post", baseUrlApi("platform/menu/create"), {
+    data
+  });
 };
 
 /** 获取系统管理-菜单管理列表 */
 export const getMenuList = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("sys/menu/list"), { data });
+  return http.request<Result>("post", baseUrlApi("platform/menu/list"), {
+    data
+  });
 };
 
 /** 删除系统管理-菜单管理 */
 export const deleteMenu = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("sys/menu/delete/" + data), { });
+  return http.request<Result>(
+    "post",
+    baseUrlApi("platform/menu/delete/" + data),
+    {}
+  );
 };

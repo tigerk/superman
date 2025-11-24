@@ -14,8 +14,7 @@ import {
   keepAliveOptions,
   hiddenTagOptions,
   showParentOptions,
-  frameLoadingOptions,
-  isPlatformOptions
+  frameLoadingOptions
 } from "./utils/enums";
 
 const props = withDefaults(defineProps<FormProps>(), {
@@ -42,8 +41,7 @@ const props = withDefaults(defineProps<FormProps>(), {
     hiddenTag: false,
     fixedTag: false,
     showLink: true,
-    showParent: false,
-    isPlatform: false
+    showParent: false
   })
 });
 
@@ -335,20 +333,6 @@ defineExpose({ getRef });
             @change="
               ({ option: { value } }) => {
                 newFormInline.fixedTag = value;
-              }
-            "
-          />
-        </el-form-item>
-      </re-col>
-
-      <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="平台菜单">
-          <Segmented
-            :modelValue="newFormInline.isPlatform ? 0 : 1"
-            :options="isPlatformOptions"
-            @change="
-              ({ option: { value } }) => {
-                newFormInline.isPlatform = value;
               }
             "
           />

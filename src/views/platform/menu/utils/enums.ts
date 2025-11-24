@@ -97,19 +97,6 @@ const frameLoadingOptions: Array<OptionsType> = [
   }
 ];
 
-const isPlatformOptions: Array<OptionsType> = [
-  {
-    label: "是",
-    tip: "定义的菜单为平台菜单",
-    value: true
-  },
-  {
-    label: "否",
-    tip: "定义的菜单为平台菜单",
-    value: false
-  }
-];
-
 export {
   menuTypeOptions,
   showLinkOptions,
@@ -117,6 +104,5 @@ export {
   keepAliveOptions,
   hiddenTagOptions,
   showParentOptions,
-  frameLoadingOptions,
-  isPlatformOptions
+  frameLoadingOptions
 };

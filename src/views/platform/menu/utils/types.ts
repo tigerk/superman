@@ -23,7 +23,6 @@ interface FormItemProps {
   fixedTag: boolean;
   showLink: boolean;
   showParent: boolean;
-  isPlatform: boolean;
 }
 
 interface FormProps {
