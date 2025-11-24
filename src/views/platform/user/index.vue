@@ -4,6 +4,7 @@ import { useUser } from "./utils/hook";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Password from "~icons/ri/lock-password-line";
+import Role from "~icons/ri/admin-line";
 import More from "~icons/ep/more-filled";
 import EditPen from "~icons/ep/edit-pen";
 import Delete from "~icons/ep/delete";
@@ -35,6 +36,7 @@ const {
   handleUpload,
   handleReset,
   handleSizeChange,
+  handleRole,
   onSelectionCancel,
   handleCurrentChange,
   handleSelectionChange
@@ -170,6 +172,18 @@ const {
                           @click="handleReset(row)"
                         >
                           重置密码
+                        </el-button>
+                      </el-dropdown-item>
+                      <el-dropdown-item>
+                        <el-button
+                          :class="buttonClass"
+                          link
+                          type="primary"
+                          :size="size"
+                          :icon="useRenderIcon(Role)"
+                          @click="handleRole(row)"
+                        >
+                          分配角色
                         </el-button>
                       </el-dropdown-item>
                     </el-dropdown-menu>
