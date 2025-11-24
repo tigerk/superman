@@ -5,19 +5,19 @@ import { isPhone, isEmail } from "@pureadmin/utils";
 /** 自定义表单规则校验 */
 export const formRules = reactive(<FormRules>{
   nickname: [{ required: true, message: "用户昵称为必填项", trigger: "blur" }],
-  username: [{ required: true, message: "用户名称为必填项", trigger: "blur" }],
   password: [{ required: true, message: "用户密码为必填项", trigger: "blur" }],
   userType: [{ required: true, message: "用户类型为必填项", trigger: "blur" }],
   gender: [{ required: true, message: "用户性别为必填项", trigger: "blur" }],
   phone: [
     {
+      required: true,
       validator: (rule, value, callback) => {
         if (value === "") {
+          callback(new Error("请输入手机号码"));
+        } else if (isPhone(value)) {
           callback();
-        } else if (!isPhone(value)) {
-          callback(new Error("请输入正确的手机号码格式"));
         } else {
-          callback();
+          callback(new Error("请输入正确的手机号码格式"));
         }
       },
       trigger: "blur"
@@ -29,10 +29,10 @@ export const formRules = reactive(<FormRules>{
       validator: (rule, value, callback) => {
         if (value === "") {
           callback();
-        } else if (!isEmail(value)) {
-          callback(new Error("请输入正确的邮箱格式"));
-        } else {
+        } else if (isEmail(value)) {
           callback();
+        } else {
+          callback(new Error("请输入正确的邮箱格式"));
         }
       },
       trigger: "blur"

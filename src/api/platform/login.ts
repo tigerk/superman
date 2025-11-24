@@ -98,40 +98,6 @@ export const getMineLogs = (data?: object) => {
   return http.request<ResultTable>("get", "/mine-logs", { data });
 };
 
-/** 获取系统管理-用户管理列表 */
-export const getUserList = (data?: object) => {
-  return http.request<ResultTable>("post", baseUrlApi("user/list"), { data });
-};
-
-/** 创建用户信息 */
-export const createUser = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("user/create"), { data });
-};
-
-/** 更新用户信息 */
-export const updateUser = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("user/update"), { data });
-};
-
-/** 更新用户信息 */
-export const updateUserStatus = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("user/updateStatus"), {
-    data
-  });
-};
-
-export const resetUserPassword = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("user/resetPassword"), {
-    data
-  });
-};
-
-export const updateUserAvatar = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("user/updateAvatar"), {
-    data
-  });
-};
-
 export const sendSmsCode = (data?: object) => {
   return http.request<UserResult>("post", baseUrlApi("login/sms/send"), {
     params: data
