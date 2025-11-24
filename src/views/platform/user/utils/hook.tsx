@@ -41,6 +41,7 @@ import {
   resetUserPassword,
   updateUser,
   updateUserAvatar,
+  updateUserRole,
   updateUserStatus
 } from "@/api/platform/user";
 import { getAllRoleList, getRoleIds } from "@/api/platform/role";
@@ -543,6 +544,7 @@ export function useUser(tableRef: Ref) {
         formInline: {
           username: row?.username ?? "",
           nickname: row?.nickname ?? "",
+          phone: row?.phone ?? "",
           roleOptions: roleOptions.value ?? [],
           ids
         }
@@ -557,7 +559,24 @@ export function useUser(tableRef: Ref) {
         const curData = options.props.formInline as RoleFormItemProps;
         console.log("curIds", curData.ids);
         // 根据实际业务使用curData.ids和row里的某些字段去调用修改角色接口即可
-        done(); // 关闭弹框
+        updateUserRole({
+          userId: row.id,
+          roleIds: curData.ids
+        }).then(resp => {
+          if (resp.code === 0) {
+            message(`已成功分配 ${row.phone} 用户的角色`, {
+              type: "success"
+            });
+            // 刷新表格数据
+            onPlatformUserSearch();
+            // 关闭弹框
+            done();
+          } else {
+            message(resp.message, {
+              type: "error"
+            });
+          }
+        });
       }
     });
   }
