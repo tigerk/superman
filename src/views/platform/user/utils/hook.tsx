@@ -194,13 +194,10 @@ export function useUser(tableRef: Ref) {
       }
     )
       .then(() => {
-        switchLoadMap.value[index] = Object.assign(
-          {},
-          switchLoadMap.value[index],
-          {
-            loading: true
-          }
-        );
+        switchLoadMap.value[index] = {
+          ...switchLoadMap.value[index],
+          loading: true
+        };
         setTimeout(() => {
           updateUserStatus({ id: row.id, status: row.status }).then(resp => {
             if (resp.code === 0) {
@@ -211,6 +208,8 @@ export function useUser(tableRef: Ref) {
               message(resp.message, {
                 type: "error"
               });
+              // 重置成之前状态
+              row.status = row.status === 0 ? 1 : 0;
             }
           });
 
@@ -224,7 +223,7 @@ export function useUser(tableRef: Ref) {
         }, 300);
       })
       .catch(() => {
-        row.status === 0 ? (row.status = 0) : (row.status = -1);
+        row.status === 0 ? (row.status = 1) : (row.status = 0);
       });
   }
 

@@ -16,6 +16,7 @@ const props = withDefaults(defineProps<FormProps>(), {
     password: "",
     phone: "",
     email: "",
+    canUpdate: false,
     gender: "",
     userType: 20,
     status: 1,
@@ -77,7 +78,8 @@ defineExpose({ getRef });
           />
         </el-form-item>
       </re-col>
-
+    </el-row>
+    <el-row :gutter="30">
       <re-col :value="12" :xs="24" :sm="24">
         <el-form-item label="用户昵称" prop="nickname">
           <el-input
@@ -96,6 +98,8 @@ defineExpose({ getRef });
           />
         </el-form-item>
       </re-col>
+    </el-row>
+    <el-row :gutter="30">
       <re-col :value="12" :xs="24" :sm="24">
         <el-form-item label="用户类型" prop="userType">
           <el-radio-group
@@ -130,7 +134,7 @@ defineExpose({ getRef });
       </re-col>
       <re-col
         v-if="newFormInline.title === '新增'"
-        :value="24"
+        :value="12"
         :xs="24"
         :sm="24"
       >
@@ -146,7 +150,8 @@ defineExpose({ getRef });
           />
         </el-form-item>
       </re-col>
-
+    </el-row>
+    <el-row :gutter="30">
       <re-col>
         <el-form-item label="备注">
           <el-input
