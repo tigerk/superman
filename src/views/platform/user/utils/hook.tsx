@@ -332,6 +332,7 @@ export function useUser(tableRef: Ref) {
           password: row?.password ?? "",
           phone: row?.phone ?? "",
           email: row?.email ?? "",
+          userType: row?.userType ?? 20,
           gender: row?.gender ?? 1,
           status: row?.status ?? 1,
           remark: row?.remark ?? ""
