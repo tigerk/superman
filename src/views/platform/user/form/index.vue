@@ -4,6 +4,7 @@ import ReCol from "@/components/ReCol";
 import { formRules } from "../utils/rule";
 import { FormProps } from "../utils/types";
 import { usePublicHooks } from "@/utils/publicHooks";
+import { USER_TYPE_OPTIONS } from "@/constants";
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
@@ -96,8 +97,28 @@ defineExpose({ getRef });
         </el-form-item>
       </re-col>
       <re-col :value="12" :xs="24" :sm="24">
+        <el-form-item label="用户类型" prop="userType">
+          <el-radio-group
+            v-model="newFormInline.userType"
+            class="w-full"
+            size="small"
+          >
+            <el-radio-button
+              v-for="item in USER_TYPE_OPTIONS"
+              :key="item.value"
+              :value="item.value"
+              >{{ item.label }}
+            </el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+      </re-col>
+      <re-col :value="12" :xs="24" :sm="24">
         <el-form-item label="用户性别" prop="gender">
-          <el-radio-group v-model="newFormInline.gender" class="w-full" size="small">
+          <el-radio-group
+            v-model="newFormInline.gender"
+            class="w-full"
+            size="small"
+          >
             <el-radio-button
               v-for="item in genderOptions"
               :key="item.value"
@@ -109,7 +130,7 @@ defineExpose({ getRef });
       </re-col>
       <re-col
         v-if="newFormInline.title === '新增'"
-        :value="12"
+        :value="24"
         :xs="24"
         :sm="24"
       >

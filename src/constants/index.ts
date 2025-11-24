@@ -36,3 +36,10 @@ export const USER_STATUS_OPTIONS = [
   { label: "启用", value: 1 }
 ] as const;
 
+/**
+ * 用户类型选项
+ */
+export const USER_TYPE_OPTIONS = [
+  { label: "超级管理员", value: 10 },
+  { label: "普通用户", value: 20 }
+] as const;

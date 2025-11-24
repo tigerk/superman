@@ -7,6 +7,8 @@ interface FormItemProps {
   password: string;
   phone: string | number;
   email: string;
+  canUpdate: boolean; // 能否修改用户信息
+  userType: number;
   gender: string | number;
   status: number;
   remark: string;
