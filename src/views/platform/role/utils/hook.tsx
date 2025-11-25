@@ -3,14 +3,23 @@ import editForm from "../form.vue";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
-import { usePublicHooks } from "../../hooks";
 import { transformI18n } from "@/plugins/i18n";
 import { addDialog } from "@/components/ReDialog";
-import type { FormItemProps } from "../utils/types";
+import type { FormItemProps } from "@/views/platform/role/utils/types";
 import type { PaginationProps } from "@pureadmin/table";
-import { getKeyList, deviceDetection } from "@pureadmin/utils";
-import { getRoleList, getRoleMenu, getRoleMenuIds } from "@/api/platform/system";
-import { type Ref, reactive, ref, onMounted, h, toRaw, watch } from "vue";
+import { deviceDetection, getKeyList } from "@pureadmin/utils";
+import { getRoleList, getRoleMenu, getRoleMenuIds } from "@/api/platform/role";
+import {
+  computed,
+  h,
+  onMounted,
+  reactive,
+  ref,
+  type Ref,
+  toRaw,
+  watch
+} from "vue";
+import { usePublicHooks } from "@/utils/publicHooks";
 
 export function useRole(treeRef: Ref) {
   const form = reactive({
@@ -49,11 +58,16 @@ export function useRole(treeRef: Ref) {
     },
     {
       label: "角色名称",
-      prop: "name"
+      prop: "roleName"
     },
     {
       label: "角色标识",
-      prop: "code"
+      prop: "roleCode"
+    },
+    {
+      label: "备注",
+      prop: "remark",
+      minWidth: 160
     },
     {
       label: "状态",
@@ -74,11 +88,6 @@ export function useRole(treeRef: Ref) {
       minWidth: 90
     },
     {
-      label: "备注",
-      prop: "remark",
-      minWidth: 160
-    },
-    {
       label: "创建时间",
       prop: "createTime",
       minWidth: 160,
@@ -92,15 +101,15 @@ export function useRole(treeRef: Ref) {
       slot: "operation"
     }
   ];
-  // const buttonClass = computed(() => {
-  //   return [
-  //     "h-[20px]!",
-  //     "reset-margin",
-  //     "text-gray-500!",
-  //     "dark:text-white!",
-  //     "dark:hover:text-primary!"
-  //   ];
-  // });
+  const buttonClass = computed(() => {
+    return [
+      "h-[20px]!",
+      "reset-margin",
+      "text-gray-500!",
+      "dark:text-white!",
+      "dark:hover:text-primary!"
+    ];
+  });
 
   function onChange({ row, index }) {
     ElMessageBox.confirm(
@@ -119,21 +128,15 @@ export function useRole(treeRef: Ref) {
       }
     )
       .then(() => {
-        switchLoadMap.value[index] = Object.assign(
-          {},
-          switchLoadMap.value[index],
-          {
-            loading: true
-          }
-        );
+        switchLoadMap.value[index] = {
+          ...switchLoadMap.value[index],
+          loading: true
+        };
         setTimeout(() => {
-          switchLoadMap.value[index] = Object.assign(
-            {},
-            switchLoadMap.value[index],
-            {
-              loading: false
-            }
-          );
+          switchLoadMap.value[index] = {
+            ...switchLoadMap.value[index],
+            loading: false
+          };
           message(`已${row.status === 0 ? "停用" : "启用"}${row.name}`, {
             type: "success"
           });
@@ -146,7 +149,7 @@ export function useRole(treeRef: Ref) {
 
   function handleDelete(row) {
     message(`您删除了角色名称为${row.name}的这条数据`, { type: "success" });
-    onSearch();
+    onRoleSearch();
   }
 
   function handleSizeChange(val: number) {
@@ -161,7 +164,7 @@ export function useRole(treeRef: Ref) {
     console.log("handleSelectionChange", val);
   }
 
-  async function onSearch() {
+  async function onRoleSearch() {
     loading.value = true;
     const { data } = await getRoleList(toRaw(form));
     dataList.value = data.list;
@@ -177,7 +180,7 @@ export function useRole(treeRef: Ref) {
   const resetForm = formEl => {
     if (!formEl) return;
     formEl.resetFields();
-    onSearch();
+    onRoleSearch();
   };
 
   function openDialog(title = "新增", row?: FormItemProps) {
@@ -204,7 +207,7 @@ export function useRole(treeRef: Ref) {
             type: "success"
           });
           done(); // 关闭弹框
-          onSearch(); // 刷新表格数据
+          onRoleSearch().then(); // 刷新表格数据
         }
         FormRef.validate(valid => {
           if (valid) {
@@ -267,7 +270,7 @@ export function useRole(treeRef: Ref) {
   };
 
   onMounted(async () => {
-    onSearch();
+    onRoleSearch().then();
     const { data } = await getRoleMenu();
     treeIds.value = getKeyList(data, "id");
     treeData.value = handleTree(data);
@@ -300,8 +303,8 @@ export function useRole(treeRef: Ref) {
     isExpandAll,
     isSelectAll,
     treeSearchValue,
-    // buttonClass,
-    onSearch,
+    buttonClass,
+    onRoleSearch,
     resetForm,
     openDialog,
     handleMenu,

@@ -10,8 +10,6 @@ import {
   useResizeObserver
 } from "@pureadmin/utils";
 
-// import Database from "~icons/ri/database-2-line";
-// import More from "~icons/ep/more-filled";
 import Delete from "~icons/ep/delete";
 import EditPen from "~icons/ep/edit-pen";
 import Refresh from "~icons/ep/refresh";
@@ -62,8 +60,8 @@ const {
   isExpandAll,
   isSelectAll,
   treeSearchValue,
-  // buttonClass,
-  onSearch,
+  buttonClass,
+  onRoleSearch,
   resetForm,
   openDialog,
   handleMenu,
@@ -130,7 +128,7 @@ onMounted(() => {
           type="primary"
           :icon="useRenderIcon('ri:search-line')"
           :loading="loading"
-          @click="onSearch"
+          @click="onRoleSearch"
         >
           搜索
         </el-button>
@@ -149,7 +147,7 @@ onMounted(() => {
         style="transition: width 220ms cubic-bezier(0.4, 0, 0.2, 1)"
         title="角色管理（仅演示，操作后不生效）"
         :columns="columns"
-        @refresh="onSearch"
+        @refresh="onRoleSearch"
       >
         <template #buttons>
           <el-button

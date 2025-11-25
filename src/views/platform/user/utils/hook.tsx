@@ -37,6 +37,7 @@ import {
 import {
   createUser,
   deleteUser,
+  getRoleIds,
   getUserList,
   resetUserPassword,
   updateUser,
@@ -44,7 +45,7 @@ import {
   updateUserRole,
   updateUserStatus
 } from "@/api/platform/user";
-import { getAllRoleList, getRoleIds } from "@/api/platform/role";
+import { getAllRoleList } from "@/api/platform/role";
 
 export function useUser(tableRef: Ref) {
   const form = reactive({

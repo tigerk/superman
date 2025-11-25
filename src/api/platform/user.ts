@@ -89,3 +89,10 @@ export const updateUserRole = (data?: object) => {
     data
   });
 };
+
+/** 系统管理-用户管理-根据userId，获取对应角色id列表（userId：用户id） */
+export const getRoleIds = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("user/list-role-ids"), {
+    data
+  });
+};
