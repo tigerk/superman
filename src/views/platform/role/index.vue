@@ -19,7 +19,7 @@ import Close from "~icons/ep/close";
 import Check from "~icons/ep/check";
 
 defineOptions({
-  name: "SystemRole"
+  name: "PlatformRole"
 });
 
 const iconClass = computed(() => {
