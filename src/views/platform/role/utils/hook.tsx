@@ -58,11 +58,11 @@ export function useRole(treeRef: Ref) {
     },
     {
       label: "角色名称",
-      prop: "roleName"
+      prop: "name"
     },
     {
       label: "角色标识",
-      prop: "roleCode"
+      prop: "code"
     },
     {
       label: "备注",
@@ -178,9 +178,11 @@ export function useRole(treeRef: Ref) {
   }
 
   const resetForm = formEl => {
-    if (!formEl) return;
+    if (!formEl) {
+      return;
+    }
     formEl.resetFields();
-    onRoleSearch();
+    onRoleSearch().then();
   };
 
   function openDialog(title = "新增", row?: FormItemProps) {
