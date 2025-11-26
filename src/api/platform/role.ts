@@ -43,3 +43,24 @@ export const getRoleMenuIds = (data?: object) => {
     data
   });
 };
+
+/** 创建角色-权限-权限 */
+export const createRole = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("role/create"), {
+    data
+  });
+};
+
+/** 修改角色-权限-权限 */
+export const updateRole = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("role/update"), {
+    data
+  });
+};
+
+/** 删除角色管理-角色 */
+export const deleteRole = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("role/delete"), {
+    data
+  });
+};
