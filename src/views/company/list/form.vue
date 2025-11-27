@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { formRules } from "./utils/rule";
 import { FormProps } from "./utils/types";
-import { getCompanyPackageSimple, getCompanyUserSimple } from "@/api/platform/system";
+import { getCompanyPackageSimple } from "@/api/platform/system";
 import RegionCascader from "@/components/Business/RegionCascader.vue";
 import ReCol from "@/components/ReCol";
 
@@ -53,7 +53,6 @@ function getRef() {
 
 onMounted(async () => {
   packageOptions.value = (await getCompanyPackageSimple()).data;
-  userOptions.value = (await getCompanyUserSimple()).data;
 });
 
 defineExpose({ getRef });
@@ -142,27 +141,37 @@ defineExpose({ getRef });
         placeholder="请输入通信地址"
       />
     </el-form-item>
-    <re-col class="px-2 pb-3.5">
-      <el-alert type="warning" show-icon :closable="false">
-        <p>找不到用户，请在用户管理中创建用户后再操作</p>
-      </el-alert>
-    </re-col>
-    <el-form-item label="管理员" prop="adminUserId">
-      <el-select
-        v-model="newFormInline.adminUserId"
-        placeholder="请选择管理员"
+    <el-form-item label="手机号" prop="accountPhone">
+      <el-input
+        v-model="newFormInline.accountPhone"
         clearable
-        class="w-full!"
-      >
-        <el-option
-          v-for="(option, index) in userOptions"
-          :key="index"
-          :label="option.name"
-          :value="option.id"
-        />
-      </el-select>
+        placeholder="请输入用户手机号"
+      />
     </el-form-item>
 
+    <el-form-item
+      v-if="newFormInline.title === '新增'"
+      label="用户密码"
+      prop="accountPassword"
+    >
+      <el-input
+        v-model="newFormInline.accountPassword"
+        clearable
+        type="password"
+        show-password
+        placeholder="请输入用户密码"
+      />
+    </el-form-item>
+    <re-col class="px-2 pb-3.5">
+      <el-alert type="warning" :closable="false">
+        <p v-if="newFormInline.title === '新增'">
+          使用手机号、用户密码创建公司管理员账号
+        </p>
+        <p v-if="newFormInline.title !== '新增'">
+          修改手机号会将管理员账号的手机号修改为新手机号，<br />如果当前手机号已存在，则直接变更绑定。
+        </p>
+      </el-alert>
+    </re-col>
     <el-form-item label="账号额度" prop="accountCount">
       <el-input-number
         v-model="newFormInline.accountCount"

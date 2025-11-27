@@ -2,9 +2,9 @@ import dayjs from "dayjs";
 import { message } from "@/utils/message";
 import { getKeyList } from "@pureadmin/utils";
 import { getOperationLogsList } from "@/api/platform/system";
-import { usePublicHooks } from "@/views/system/hooks";
 import type { PaginationProps } from "@pureadmin/table";
 import { type Ref, reactive, ref, onMounted, toRaw } from "vue";
+import { usePublicHooks } from "@/utils/publicHooks";
 
 export function useRole(tableRef: Ref) {
   const form = reactive({
