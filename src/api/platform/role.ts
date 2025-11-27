@@ -39,7 +39,7 @@ export const getRoleMenu = (data?: object) => {
 
 /** 获取角色管理-权限-菜单权限-根据角色 id 查对应菜单 */
 export const getRoleMenuIds = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("/role/role-menu-ids"), {
+  return http.request<Result>("post", baseUrlApi("role/role-menu-ids"), {
     data
   });
 };
@@ -61,6 +61,12 @@ export const updateRole = (data?: object) => {
 /** 删除角色管理-角色 */
 export const deleteRole = (data?: object) => {
   return http.request<Result>("post", baseUrlApi("role/delete"), {
+    data
+  });
+};
+
+export const assignRoleMenu = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("role/menu/assign"), {
     data
   });
 };

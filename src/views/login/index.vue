@@ -54,8 +54,8 @@ const { locale, translationCh, translationEn } = useTranslationLang();
 
 // 登录表单
 const loginForm = reactive({
-  username: "superman",
-  password: "654321"
+  username: "",
+  password: ""
 });
 
 // 登录处理

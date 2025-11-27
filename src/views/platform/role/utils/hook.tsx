@@ -9,10 +9,10 @@ import type { FormItemProps } from "@/views/platform/role/utils/types";
 import type { PaginationProps } from "@pureadmin/table";
 import { deviceDetection, getKeyList } from "@pureadmin/utils";
 import {
+  assignRoleMenu,
   createRole,
   deleteRole,
   getRoleList,
-  getRoleMenu,
   getRoleMenuIds,
   updateRole
 } from "@/api/platform/role";
@@ -275,9 +275,15 @@ export function useRole(treeRef: Ref) {
   function handleSave() {
     const { id, name } = curRow.value;
     // 根据用户 id 调用实际项目中菜单权限修改接口
-    console.log(id, treeRef.value.getCheckedKeys());
-    message(`角色名称为${name}的菜单权限修改成功`, {
-      type: "success"
+    assignRoleMenu({
+      roleId: id,
+      menuIds: treeRef.value.getCheckedKeys()
+    }).then(res => {
+      if (res.code === 0) {
+        message(`角色名称为${name}的菜单权限修改成功`, {
+          type: "success"
+        });
+      }
     });
   }
 
