@@ -163,7 +163,7 @@ export function useUser(tableRef: Ref) {
     {
       label: "操作",
       fixed: "right",
-      width: 180,
+      width: 200,
       slot: "operation"
     }
   ];
