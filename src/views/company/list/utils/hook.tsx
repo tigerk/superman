@@ -73,7 +73,7 @@ export function useTenantList() {
     },
     {
       label: "管理员账号",
-      prop: "adminUsername",
+      prop: "accountPhone",
       minWidth: 120
     },
     {
@@ -160,7 +160,7 @@ export function useTenantList() {
 
   function handleDelete(row) {
     message(`您删除了租户名为${row.name}的这条数据`, { type: "success" });
-    onSearch();
+    onCompanySearch();
   }
 
   function handleSizeChange(val: number) {
@@ -175,7 +175,7 @@ export function useTenantList() {
     console.log("handleSelectionChange", val);
   }
 
-  async function onSearch() {
+  async function onCompanySearch() {
     loading.value = true;
     const { data } = await getCompanyList(toRaw(form));
     dataList.value = data.list;
@@ -191,7 +191,7 @@ export function useTenantList() {
   const resetForm = formEl => {
     if (!formEl) return;
     formEl.resetFields();
-    onSearch();
+    onCompanySearch().then();
   };
 
   function openDialog(title = "新增", row?: FormItemProps) {
@@ -257,7 +257,7 @@ export function useTenantList() {
                 type: "success"
               });
               done(); // 关闭弹框
-              onSearch(); // 刷新表格数据
+              onCompanySearch().then(); // 刷新表格数据
             } else {
               message(resp.message, {
                 type: "error"
@@ -284,7 +284,7 @@ export function useTenantList() {
   }
 
   onMounted(() => {
-    onSearch();
+    onCompanySearch();
   });
 
   return {
@@ -294,7 +294,7 @@ export function useTenantList() {
     columns,
     dataList,
     pagination,
-    onSearch,
+    onSearch: onCompanySearch,
     resetForm,
     openDialog,
     handleDelete,

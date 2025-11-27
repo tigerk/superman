@@ -27,8 +27,10 @@ interface FormItemProps {
   accountCount: number;
   /** 租户套餐 */
   packageId: number;
-  /** 公司管理员 */
-  adminUserId: number;
+  /** 手机号 */
+  accountPhone: string;
+  /** 密码 */
+  accountPassword: string;
   /** 备注 */
   remark: string;
   /** 公司性质 1：企业 2：个人 */
