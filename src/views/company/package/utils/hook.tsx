@@ -14,7 +14,6 @@ import {
   createCompanyPackage,
   getCompanyPackageList,
   getCompanyPackageMenuList,
-  getCompanyPackageMenus,
   saveCompanyPackageMenus
 } from "@/api/company/company";
 import { usePublicHooks } from "@/utils/publicHooks";
@@ -61,7 +60,7 @@ export function useTenantPackage(treeRef: Ref) {
       label: "状态",
       cellRenderer: scope => (
         <el-switch
-          size={scope.props.size === "small" ? "small" : "default"}
+          size={scope.props.size === "small" ? "small" : ""}
           loading={switchLoadMap.value[scope.index]?.loading}
           v-model={scope.row.status}
           active-value={1}
@@ -125,13 +124,10 @@ export function useTenantPackage(treeRef: Ref) {
             status: row.status
           }).then(resp => {
             if (resp.code == 0) {
-              switchLoadMap.value[index] = Object.assign(
-                {},
-                switchLoadMap.value[index],
-                {
-                  loading: false
-                }
-              );
+              switchLoadMap.value[index] = {
+                ...switchLoadMap.value[index],
+                loading: false
+              };
               message(`已${row.status === 0 ? "停用" : "启用"}${row.name}`, {
                 type: "success"
               });
@@ -148,7 +144,7 @@ export function useTenantPackage(treeRef: Ref) {
 
   function handleDelete(row) {
     message(`您删除了套餐名称为${row.name}的这条数据`, { type: "success" });
-    onCompanyPackageSearch();
+    onCompanyPackageSearch().then();
   }
 
   function handleSizeChange(val: number) {
@@ -245,8 +241,7 @@ export function useTenantPackage(treeRef: Ref) {
     if (id) {
       curRow.value = row;
       isShow.value = true;
-      const { data } = await getCompanyPackageMenus({ id });
-      treeRef.value.setCheckedKeys(data);
+      treeRef.value.setCheckedKeys(row.packageMenus);
       treeRef.value.setExpandedKeys(treeIds.value);
     } else {
       curRow.value = null;
@@ -290,7 +285,7 @@ export function useTenantPackage(treeRef: Ref) {
   };
 
   onMounted(async () => {
-    onCompanyPackageSearch();
+    onCompanyPackageSearch().then();
     const { data } = await getCompanyPackageMenuList();
     treeIds.value = getKeyList(data, "id");
     treeData.value = handleTree(data);
