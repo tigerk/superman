@@ -5,7 +5,7 @@ import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
 import { transformI18n } from "@/plugins/i18n";
 import { addDialog } from "@/components/ReDialog";
-import type { FormItemProps } from "./types";
+import type { CompanyPackageFormItemProps } from "./types";
 import type { PaginationProps } from "@pureadmin/table";
 import { deviceDetection, getKeyList } from "@pureadmin/utils";
 import { h, onMounted, reactive, type Ref, ref, toRaw, watch } from "vue";
@@ -16,7 +16,7 @@ import {
   getCompanyPackageMenuList,
   getCompanyPackageMenus,
   saveCompanyPackageMenus
-} from "@/api/system";
+} from "@/api/company/company";
 import { usePublicHooks } from "@/utils/publicHooks";
 
 export function useTenantPackage(treeRef: Ref) {
@@ -148,7 +148,7 @@ export function useTenantPackage(treeRef: Ref) {
 
   function handleDelete(row) {
     message(`您删除了套餐名称为${row.name}的这条数据`, { type: "success" });
-    onSearch();
+    onCompanyPackageSearch();
   }
 
   function handleSizeChange(val: number) {
@@ -163,10 +163,11 @@ export function useTenantPackage(treeRef: Ref) {
     console.log("handleSelectionChange", val);
   }
 
-  async function onSearch() {
+  async function onCompanyPackageSearch() {
     loading.value = true;
     const { data } = await getCompanyPackageList(toRaw(form));
     dataList.value = data.list;
+
     pagination.total = Number(data.total);
     pagination.pageSize = Number(data.pageSize);
     pagination.currentPage = Number(data.currentPage);
@@ -179,10 +180,10 @@ export function useTenantPackage(treeRef: Ref) {
   const resetForm = formEl => {
     if (!formEl) return;
     formEl.resetFields();
-    onSearch();
+    onCompanyPackageSearch();
   };
 
-  function openDialog(title = "新增", row?: FormItemProps) {
+  function openDialog(title = "新增", row?: CompanyPackageFormItemProps) {
     addDialog({
       title: `${title}套餐`,
       props: {
@@ -200,7 +201,7 @@ export function useTenantPackage(treeRef: Ref) {
       contentRenderer: () => h(editForm, { ref: formRef, formInline: null }),
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
-        const curData = options.props.formInline as FormItemProps;
+        const curData = options.props.formInline as CompanyPackageFormItemProps;
 
         function chores() {
           createCompanyPackage({
@@ -214,7 +215,7 @@ export function useTenantPackage(treeRef: Ref) {
               });
 
               done(); // 关闭弹框
-              onSearch(); // 刷新表格数据
+              onCompanyPackageSearch(); // 刷新表格数据
             } else {
               message(resp.message, { type: "error" });
             }
@@ -289,7 +290,7 @@ export function useTenantPackage(treeRef: Ref) {
   };
 
   onMounted(async () => {
-    onSearch();
+    onCompanyPackageSearch();
     const { data } = await getCompanyPackageMenuList();
     treeIds.value = getKeyList(data, "id");
     treeData.value = handleTree(data);
@@ -322,7 +323,7 @@ export function useTenantPackage(treeRef: Ref) {
     isExpandAll,
     isSelectAll,
     treeSearchValue,
-    onSearch,
+    onSearch: onCompanyPackageSearch,
     resetForm,
     openDialog,
     handleMenu,

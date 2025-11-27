@@ -1,4 +1,4 @@
-interface FormItemProps {
+interface CompanyPackageFormItemProps {
   id?: string;
   /** 套餐名称 */
   name: string;
@@ -6,8 +6,8 @@ interface FormItemProps {
   remark: string;
 }
 
-interface FormProps {
-  formInline: FormItemProps;
+interface CompanyPackageFormProps {
+  formInline: CompanyPackageFormItemProps;
 }
 
-export type { FormItemProps, FormProps };
+export type { CompanyPackageFormItemProps, CompanyPackageFormProps };
