@@ -132,6 +132,21 @@ defineExpose({ getRef });
           </el-radio-group>
         </el-form-item>
       </re-col>
+      <re-col :value="24" :xs="24" :sm="24">
+        <el-alert
+          type="info"
+          showIcon="true"
+          :closable="false"
+          style="margin-top: -10px; margin-bottom: 10px"
+        >
+          <template #default>
+            <div><strong>超级管理员</strong> 自动拥有所有权限，请谨慎设置</div>
+            <div>
+              <strong>普通用户</strong> 可按照权限-角色进行配置，仅拥有配置的角色权限
+            </div>
+          </template>
+        </el-alert>
+      </re-col>
       <re-col
         v-if="newFormInline.title === '新增'"
         :value="12"
