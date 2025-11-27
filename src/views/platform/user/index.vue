@@ -146,10 +146,10 @@ const {
                   link
                   type="primary"
                   :size="size"
-                  :icon="useRenderIcon(Delete)"
-                  @click="handleDelete(row)"
+                  :icon="useRenderIcon(Role)"
+                  @click="handleRole(row)"
                 >
-                  删除
+                  分配角色
                 </el-button>
                 <el-dropdown>
                   <el-button
@@ -180,10 +180,10 @@ const {
                           link
                           type="primary"
                           :size="size"
-                          :icon="useRenderIcon(Role)"
-                          @click="handleRole(row)"
+                          :icon="useRenderIcon(Delete)"
+                          @click="handleDelete(row)"
                         >
-                          分配角色
+                          删除
                         </el-button>
                       </el-dropdown-item>
                     </el-dropdown-menu>
