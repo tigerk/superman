@@ -27,6 +27,11 @@ export const getAllRoleList = () => {
   return http.request<Result>("post", baseUrlApi("role/list-all-role"));
 };
 
+/** 系统管理-用户管理-获取所有角色列表 */
+export const getRoleOptions = () => {
+  return http.request<Result>("post", baseUrlApi("role/options"));
+};
+
 /** 获取系统管理-角色管理列表 */
 export const getRoleList = (data?: object) => {
   return http.request<ResultTable>("post", baseUrlApi("role/list"), { data });
@@ -67,6 +72,13 @@ export const deleteRole = (data?: object) => {
 
 export const assignRoleMenu = (data?: object) => {
   return http.request<Result>("post", baseUrlApi("role/menu/assign"), {
+    data
+  });
+};
+
+/** 修改角色状态 */
+export const updateRoleStatus = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("role/status/update"), {
     data
   });
 };

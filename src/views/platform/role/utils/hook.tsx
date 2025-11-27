@@ -14,7 +14,8 @@ import {
   deleteRole,
   getRoleList,
   getRoleMenuIds,
-  updateRole
+  updateRole,
+  updateRoleStatus
 } from "@/api/platform/role";
 import {
   computed,
@@ -125,7 +126,7 @@ export function useRole(treeRef: Ref) {
         row.status === 0 ? "停用" : "启用"
       }</strong><strong style='color:var(--el-color-primary)'>${
         row.name
-      }</strong>吗?`,
+      }</strong>吗? ${row.status === 0 ? '<div class="text-red-500 el-text--small">角色停用后，所有用户的该角色也会失效</div>' : ""}`,
       "系统提示",
       {
         confirmButtonText: "确定",
@@ -140,15 +141,20 @@ export function useRole(treeRef: Ref) {
           ...switchLoadMap.value[index],
           loading: true
         };
-        setTimeout(() => {
-          switchLoadMap.value[index] = {
-            ...switchLoadMap.value[index],
-            loading: false
-          };
-          message(`已${row.status === 0 ? "停用" : "启用"}${row.name}`, {
-            type: "success"
-          });
-        }, 300);
+        updateRoleStatus({
+          id: row.id,
+          status: row.status
+        }).then(res => {
+          if (res.code === 0) {
+            switchLoadMap.value[index] = {
+              ...switchLoadMap.value[index],
+              loading: false
+            };
+            message(`已${row.status === 0 ? "停用" : "启用"}${row.name}`, {
+              type: "success"
+            });
+          }
+        });
       })
       .catch(() => {
         row.status === 0 ? (row.status = 1) : (row.status = 0);
@@ -257,6 +263,7 @@ export function useRole(treeRef: Ref) {
       isShow.value = true;
       const { data } = await getRoleMenuIds({ id });
       treeRef.value.setCheckedKeys(data);
+      isSelectAll.value = false;
     } else {
       curRow.value = null;
       isShow.value = false;
