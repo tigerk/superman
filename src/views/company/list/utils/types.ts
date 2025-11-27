@@ -1,4 +1,4 @@
-interface FormItemProps {
+interface CompanyFormItemProps {
   /** 用于判断是`新增`还是`修改` */
   title: string;
   /** 公司id */
@@ -37,8 +37,8 @@ interface FormItemProps {
   nature: number;
 }
 
-interface FormProps {
-  formInline: FormItemProps;
+interface CompanyFormProps {
+  formInline: CompanyFormItemProps;
 }
 
-export type { FormItemProps, FormProps };
+export type { CompanyFormItemProps, CompanyFormProps };

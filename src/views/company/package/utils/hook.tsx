@@ -16,7 +16,7 @@ import {
   getCompanyPackageMenuList,
   getCompanyPackageMenus,
   saveCompanyPackageMenus
-} from "@/api/platform/system";
+} from "@/api/system";
 import { usePublicHooks } from "@/utils/publicHooks";
 
 export function useTenantPackage(treeRef: Ref) {
