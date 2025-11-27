@@ -103,10 +103,10 @@ export function useMenu() {
   function resetForm(formEl) {
     if (!formEl) return;
     formEl.resetFields();
-    onSearch();
+    onMenuSearch();
   }
 
-  async function onSearch() {
+  async function onMenuSearch() {
     loading.value = true;
     // 这里是返回一维数组结构，前端自行处理成树结构，返回格式要求：唯一id加父节点parentId，parentId取父节点id
     const { data } = await getMenuList();
@@ -124,12 +124,12 @@ export function useMenu() {
   }
 
   function formatHigherMenuOptions(treeList) {
-    if (!treeList || !treeList.length) return;
+    if (!treeList?.length) return;
     const newTreeList = [];
-    for (let i = 0; i < treeList.length; i++) {
-      treeList[i].title = transformI18n(treeList[i].title);
-      formatHigherMenuOptions(treeList[i].children);
-      newTreeList.push(treeList[i]);
+    for (const element of treeList) {
+      element.title = transformI18n(element.title);
+      formatHigherMenuOptions(element.children);
+      newTreeList.push(element);
     }
     return newTreeList;
   }
@@ -185,7 +185,7 @@ export function useMenu() {
                 }
               );
               done(); // 关闭弹框
-              onSearch(); // 刷新表格数据
+              onMenuSearch(); // 刷新表格数据
             } else {
               message(resp.message, { type: "error" });
             }
@@ -215,7 +215,7 @@ export function useMenu() {
         message(`您删除了菜单名称为${transformI18n(row.title)}`, {
           type: "success"
         });
-        onSearch();
+        onMenuSearch();
       } else {
         message(resp.message, {
           type: "error"
@@ -225,7 +225,7 @@ export function useMenu() {
   }
 
   onMounted(() => {
-    onSearch();
+    onMenuSearch();
   });
 
   return {
@@ -234,7 +234,7 @@ export function useMenu() {
     columns,
     dataList,
     /** 搜索 */
-    onSearch,
+    onSearch: onMenuSearch,
     /** 重置 */
     resetForm,
     /** 新增、修改菜单 */

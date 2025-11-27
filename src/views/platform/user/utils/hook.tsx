@@ -45,7 +45,7 @@ import {
   updateUserRole,
   updateUserStatus
 } from "@/api/platform/user";
-import { getAllRoleList } from "@/api/platform/role";
+import { getAllRoleList, getRoleOptions } from "@/api/platform/role";
 
 export function useUser(tableRef: Ref) {
   const form = reactive({
@@ -191,7 +191,7 @@ export function useUser(tableRef: Ref) {
 
   function onChange({ row, index }) {
     ElMessageBox.confirm(
-      `确认要<strong>${row.status === 0 ? "启用" : "停用"}</strong><strong style='color:var(--el-color-primary)'>${row.username}</strong>用户吗?`,
+      `确认要<strong>${row.status === 0 ? "启用" : "停用"}</strong><strong style='color:var(--el-color-primary)'>${row.username}</strong>用户吗? `,
       "系统提示",
       {
         confirmButtonText: "确定",
@@ -588,7 +588,7 @@ export function useUser(tableRef: Ref) {
     });
 
     // 角色列表
-    roleOptions.value = (await getAllRoleList()).data;
+    roleOptions.value = (await getRoleOptions()).data;
   });
 
   return {
