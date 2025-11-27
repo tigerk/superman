@@ -2,17 +2,17 @@ import dayjs from "dayjs";
 import editForm from "../form.vue";
 import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
-import { usePublicHooks } from "../../hooks";
 import {
   changeCompanyStatus,
   createCompany,
   getCompanyList
 } from "@/api/platform/system";
-import { addDialog } from "@/components/ReDialog/index";
+import { addDialog } from "@/components/ReDialog";
 import { deviceDetection } from "@pureadmin/utils";
 import type { FormItemProps } from "./types";
 import type { PaginationProps } from "@pureadmin/table";
-import { reactive, ref, onMounted, h, toRaw } from "vue";
+import { h, onMounted, reactive, ref, toRaw } from "vue";
+import { usePublicHooks } from "@/utils/publicHooks";
 
 export function useTenantList() {
   const form = reactive({
