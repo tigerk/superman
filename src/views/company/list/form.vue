@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { formRules } from "./utils/rule";
-import { FormProps } from "./utils/types";
-import { getCompanyPackageSimple } from "@/api/platform/system";
+import { CompanyFormProps } from "./utils/types";
+import { getCompanyPackageSimple } from "@/api/company/company";
 import RegionCascader from "@/components/Business/RegionCascader.vue";
 import ReCol from "@/components/ReCol";
 
-const props = withDefaults(defineProps<FormProps>(), {
+const props = withDefaults(defineProps<CompanyFormProps>(), {
   formInline: () => ({
     title: "新增",
     /** 公司简称 */
@@ -33,8 +33,10 @@ const props = withDefaults(defineProps<FormProps>(), {
     website: "",
     /** 租户套餐 */
     packageId: null,
-    /** 公司管理员 */
-    adminUserId: null,
+    /** 管理员手机号 */
+    accountPhone: "",
+    /** 账号密码 */
+    accountPassword: "",
     /** 备注 */
     remark: "",
     /** 公司性质 1：企业 2：个人 */

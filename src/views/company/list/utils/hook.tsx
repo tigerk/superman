@@ -5,11 +5,12 @@ import { ElMessageBox } from "element-plus";
 import {
   changeCompanyStatus,
   createCompany,
+  deleteCompany,
   getCompanyList
-} from "@/api/platform/system";
+} from "@/api/company/company";
 import { addDialog } from "@/components/ReDialog";
 import { deviceDetection } from "@pureadmin/utils";
-import type { FormItemProps } from "./types";
+import type { CompanyFormItemProps } from "./types";
 import type { PaginationProps } from "@pureadmin/table";
 import { h, onMounted, reactive, ref, toRaw } from "vue";
 import { usePublicHooks } from "@/utils/publicHooks";
@@ -158,9 +159,13 @@ export function useTenantList() {
       });
   }
 
-  function handleDelete(row) {
-    message(`您删除了租户名为${row.name}的这条数据`, { type: "success" });
-    onCompanySearch();
+  function handleDelete(row: CompanyFormItemProps) {
+    deleteCompany({ id: row.id }).then(resp => {
+      if (resp.code === 0) {
+        message(`您删除了租户名为${row.name}的这条数据`, { type: "success" });
+        onCompanySearch().then();
+      }
+    });
   }
 
   function handleSizeChange(val: number) {
@@ -194,7 +199,7 @@ export function useTenantList() {
     onCompanySearch().then();
   };
 
-  function openDialog(title = "新增", row?: FormItemProps) {
+  function openDialog(title = "新增", row?: CompanyFormItemProps) {
     const defaultFormInline = {
       title: "新增",
       id: null,
@@ -248,7 +253,7 @@ export function useTenantList() {
       contentRenderer: () => h(editForm, { ref: formRef, formInline: null }),
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
-        const curData = options.props.formInline as FormItemProps;
+        const curData = options.props.formInline as CompanyFormItemProps;
 
         function chores() {
           createCompany(curData).then(resp => {
@@ -284,7 +289,7 @@ export function useTenantList() {
   }
 
   onMounted(() => {
-    onCompanySearch();
+    onCompanySearch().then();
   });
 
   return {

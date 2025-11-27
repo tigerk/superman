@@ -22,46 +22,6 @@ type ResultTable = {
   };
 };
 
-/** 获取系统管理-部门管理列表 */
-export const getDeptList = (data?: object) => {
-  return http.request<Result>("post", "/dept", { data });
-};
-
-/** 获取系统监控-在线用户列表 */
-export const getOnlineLogsList = (data?: object) => {
-  return http.request<ResultTable>("post", "/online-logs", { data });
-};
-
-/** 获取系统监控-登录日志列表 */
-export const getLoginLogsList = (data?: object) => {
-  return http.request<ResultTable>("post", "/login-logs", { data });
-};
-
-/** 获取系统监控-操作日志列表 */
-export const getOperationLogsList = (data?: object) => {
-  return http.request<ResultTable>("post", "/operation-logs", { data });
-};
-
-/** 获取系统监控-系统日志列表 */
-export const getSystemLogsList = (data?: object) => {
-  return http.request<ResultTable>("post", "/system-logs", { data });
-};
-
-/** 获取系统监控-系统日志-根据 id 查日志详情 */
-export const getSystemLogsDetail = (data?: object) => {
-  return http.request<Result>("post", "/system-logs-detail", { data });
-};
-
-/** 字典管理-左侧树 */
-export const getDictTree = () => {
-  return http.request<Result>("get", "/dict-tree");
-};
-
-/** 字典管理-根据字典 dictId 查字典详情 */
-export const getDictDetail = (data?: object) => {
-  return http.request<ResultTable>("post", "/dict-detail", { data });
-};
-
 /** 获取公司管理-公司列表 */
 export const getCompanyList = (data?: object) => {
   return http.request<ResultTable>("post", baseUrlApi("company/list"), {
@@ -72,6 +32,12 @@ export const getCompanyList = (data?: object) => {
 /** 获取公司管理-公司列表 */
 export const createCompany = (data?: object) => {
   return http.request<ResultTable>("post", baseUrlApi("company/create"), {
+    data
+  });
+};
+
+export const deleteCompany = (data?: object) => {
+  return http.request<ResultTable>("post", baseUrlApi("company/delete"), {
     data
   });
 };
@@ -152,8 +118,4 @@ export const getCompanyPackageSimple = () => {
     "post",
     baseUrlApi("company/package/list/simple")
   );
-};
-
-export const getCompanyUserSimple = () => {
-  return http.request<Result>("get", baseUrlApi("company/user/list/simple"));
 };
