@@ -3,19 +3,21 @@ import editForm from "../form.vue";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
-import { usePublicHooks } from "../../hooks";
 import { transformI18n } from "@/plugins/i18n";
-import { addDialog } from "@/components/ReDialog/index";
+import { addDialog } from "@/components/ReDialog";
 import type { FormItemProps } from "./types";
 import type { PaginationProps } from "@pureadmin/table";
-import { getKeyList, deviceDetection } from "@pureadmin/utils";
-import { type Ref, reactive, ref, onMounted, h, toRaw, watch } from "vue";
+import { deviceDetection, getKeyList } from "@pureadmin/utils";
+import { h, onMounted, reactive, type Ref, ref, toRaw, watch } from "vue";
 import {
-  changeCompanyPackageStatus, createCompanyPackage,
+  changeCompanyPackageStatus,
+  createCompanyPackage,
   getCompanyPackageList,
   getCompanyPackageMenuList,
-  getCompanyPackageMenus, saveCompanyPackageMenus
+  getCompanyPackageMenus,
+  saveCompanyPackageMenus
 } from "@/api/platform/system";
+import { usePublicHooks } from "@/utils/publicHooks";
 
 export function useTenantPackage(treeRef: Ref) {
   const form = reactive({
