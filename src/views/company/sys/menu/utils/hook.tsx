@@ -1,13 +1,17 @@
 import editForm from "../form.vue";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
-import { deleteMenu, getMenuList, createMenu } from "@/api/platform/menu";
+import {
+  createSysMenu,
+  deleteSysMenu,
+  getSysMenuList
+} from "@/api/company/sysMenu";
 import { transformI18n } from "@/plugins/i18n";
-import { addDialog } from "@/components/ReDialog";
-import { reactive, ref, onMounted, h } from "vue";
+import { addDialog } from "@/components/ReDialog/index";
+import { h, onMounted, reactive, ref } from "vue";
 import type { FormItemProps } from "./types";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import { cloneDeep, isAllEmpty, deviceDetection } from "@pureadmin/utils";
+import { cloneDeep, deviceDetection, isAllEmpty } from "@pureadmin/utils";
 
 export function useMenu() {
   const form = reactive({
@@ -109,7 +113,7 @@ export function useMenu() {
   async function onMenuSearch() {
     loading.value = true;
     // 这里是返回一维数组结构，前端自行处理成树结构，返回格式要求：唯一id加父节点parentId，parentId取父节点id
-    const { data } = await getMenuList();
+    const { data } = await getSysMenuList();
     let newData = data;
     if (!isAllEmpty(form.title)) {
       // 前端搜索菜单名称
@@ -147,7 +151,7 @@ export function useMenu() {
           name: row?.name ?? "",
           path: row?.path ?? "",
           component: row?.component ?? "",
-          sortOrder: row?.sortOrder ?? 99,
+          rank: row?.rank ?? 99,
           redirect: row?.redirect ?? "",
           icon: row?.icon ?? "",
           extraIcon: row?.extraIcon ?? "",
@@ -176,7 +180,7 @@ export function useMenu() {
 
         function chores() {
           debugger;
-          createMenu(curData).then(resp => {
+          createSysMenu(curData).then(resp => {
             if (resp.code == 0) {
               message(
                 `您${title}了名称为${transformI18n(curData.title)}的菜单`,
@@ -185,7 +189,7 @@ export function useMenu() {
                 }
               );
               done(); // 关闭弹框
-              onMenuSearch().then(); // 刷新表格数据
+              onMenuSearch(); // 刷新表格数据
             } else {
               message(resp.message, { type: "error" });
             }
@@ -210,7 +214,7 @@ export function useMenu() {
   }
 
   function handleDelete(row) {
-    deleteMenu(row.id).then(resp => {
+    deleteSysMenu(row.id).then(resp => {
       if (resp.code == 0) {
         message(`您删除了菜单名称为${transformI18n(row.title)}`, {
           type: "success"
