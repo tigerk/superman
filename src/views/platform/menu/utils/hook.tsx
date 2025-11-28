@@ -79,7 +79,7 @@ export function useMenu() {
     },
     {
       label: "排序",
-      prop: "rank",
+      prop: "sortOrder",
       width: 100
     },
     {
