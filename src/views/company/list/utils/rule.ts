@@ -9,10 +9,10 @@ export const formRules = reactive(<FormRules>{
   contactPhone: [
     { required: true, message: "联系电话为必填项", trigger: "blur" }
   ],
-  accountPhone: [
+  adminPhone: [
     { required: true, message: "管理员手机号为必填项", trigger: "blur" }
   ],
-  accountPassword: [
+  adminPassword: [
     { required: true, message: "管理员密码为必填项", trigger: "blur" }
   ],
   accountCount: [

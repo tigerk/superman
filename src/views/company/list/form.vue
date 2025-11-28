@@ -34,9 +34,9 @@ const props = withDefaults(defineProps<CompanyFormProps>(), {
     /** 租户套餐 */
     packageId: null,
     /** 管理员手机号 */
-    accountPhone: "",
+    adminPhone: "",
     /** 账号密码 */
-    accountPassword: "",
+    adminPassword: "",
     /** 备注 */
     remark: "",
     /** 公司性质 1：企业 2：个人 */
@@ -143,9 +143,9 @@ defineExpose({ getRef });
         placeholder="请输入通信地址"
       />
     </el-form-item>
-    <el-form-item label="手机号" prop="accountPhone">
+    <el-form-item label="手机号" prop="adminPhone">
       <el-input
-        v-model="newFormInline.accountPhone"
+        v-model="newFormInline.adminPhone"
         clearable
         placeholder="请输入用户手机号"
       />
@@ -154,10 +154,10 @@ defineExpose({ getRef });
     <el-form-item
       v-if="newFormInline.title === '新增'"
       label="用户密码"
-      prop="accountPassword"
+      prop="adminPassword"
     >
       <el-input
-        v-model="newFormInline.accountPassword"
+        v-model="newFormInline.adminPassword"
         clearable
         type="password"
         show-password

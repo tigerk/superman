@@ -28,9 +28,9 @@ interface CompanyFormItemProps {
   /** 租户套餐 */
   packageId: number;
   /** 手机号 */
-  accountPhone: string;
+  adminPhone: string;
   /** 密码 */
-  accountPassword: string;
+  adminPassword: string;
   /** 备注 */
   remark: string;
   /** 公司性质 1：企业 2：个人 */
