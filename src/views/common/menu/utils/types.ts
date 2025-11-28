@@ -1,4 +1,4 @@
-interface FormItemProps {
+export interface FormItemProps {
   id: number;
   /** 菜单类型（0代表菜单、1代表iframe、2代表外链、3代表按钮）*/
   menuType: number;
@@ -25,8 +25,16 @@ interface FormItemProps {
   showParent: boolean;
 }
 
-interface FormProps {
+export interface FormProps {
   formInline: FormItemProps;
 }
 
-export type { FormItemProps, FormProps };
+export interface MenuConfig {
+  apis: {
+    list: (data?: object) => Promise<any>;
+    create: (data?: object) => Promise<any>;
+    delete: (data?: object) => Promise<any>;
+  };
+  title?: string;
+  isDemo?: boolean;
+}

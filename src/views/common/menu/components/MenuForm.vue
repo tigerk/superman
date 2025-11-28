@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ReCol from "@/components/ReCol";
-import { formRules } from "./utils/rule";
-import { FormProps } from "./utils/types";
+import { formRules } from "../utils/rule";
+import { FormProps } from "../utils/types";
 import { transformI18n } from "@/plugins/i18n";
 import { IconSelect } from "@/components/ReIcon";
 import Segmented from "@/components/ReSegmented";
@@ -15,7 +15,7 @@ import {
   hiddenTagOptions,
   showParentOptions,
   frameLoadingOptions
-} from "./utils/enums";
+} from "../utils/enums";
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
