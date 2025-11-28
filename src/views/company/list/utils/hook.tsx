@@ -74,7 +74,7 @@ export function useTenantList() {
     },
     {
       label: "管理员账号",
-      prop: "accountPhone",
+      prop: "adminPhone",
       minWidth: 120
     },
     {
@@ -127,26 +127,20 @@ export function useTenantList() {
       }
     )
       .then(() => {
-        switchLoadMap.value[index] = Object.assign(
-          {},
-          switchLoadMap.value[index],
-          {
-            loading: true
-          }
-        );
+        switchLoadMap.value[index] = {
+          ...switchLoadMap.value[index],
+          loading: true
+        };
         setTimeout(() => {
           changeCompanyStatus({
             id: row.id,
             status: row.status
           }).then(resp => {
             if (resp.code === 0) {
-              switchLoadMap.value[index] = Object.assign(
-                {},
-                switchLoadMap.value[index],
-                {
-                  loading: false
-                }
-              );
+              switchLoadMap.value[index] = {
+                ...switchLoadMap.value[index],
+                loading: false
+              };
               message(`已${row.status === 0 ? "停用" : "启用"}${row.name}`, {
                 type: "success"
               });
@@ -274,14 +268,7 @@ export function useTenantList() {
         FormRef.validate(valid => {
           if (valid) {
             console.log("curData", curData);
-            // 表单规则校验通过
-            if (title === "新增") {
-              // 实际开发先调用新增接口，再进行下面操作
-              chores();
-            } else {
-              // 实际开发先调用修改接口，再进行下面操作
-              chores();
-            }
+            chores();
           }
         });
       }
