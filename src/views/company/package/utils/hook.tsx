@@ -14,6 +14,7 @@ import {
   createCompanyPackage,
   getCompanyPackageList,
   getCompanyPackageMenuList,
+  getCompanyPackageMenus,
   saveCompanyPackageMenus
 } from "@/api/company/company";
 import { usePublicHooks } from "@/utils/publicHooks";
@@ -241,7 +242,9 @@ export function useTenantPackage(treeRef: Ref) {
     if (id) {
       curRow.value = row;
       isShow.value = true;
-      treeRef.value.setCheckedKeys(row.packageMenus);
+
+      const { data } = await getCompanyPackageMenus({ id });
+      treeRef.value.setCheckedKeys(data);
       treeRef.value.setExpandedKeys(treeIds.value);
     } else {
       curRow.value = null;
