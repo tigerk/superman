@@ -7,7 +7,7 @@ import {
   getSysMenuList
 } from "@/api/company/sysMenu";
 import { transformI18n } from "@/plugins/i18n";
-import { addDialog } from "@/components/ReDialog/index";
+import { addDialog } from "@/components/ReDialog";
 import { h, onMounted, reactive, ref } from "vue";
 import type { FormItemProps } from "./types";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
@@ -83,7 +83,7 @@ export function useMenu() {
     },
     {
       label: "排序",
-      prop: "rank",
+      prop: "sortOrder",
       width: 100
     },
     {
@@ -151,7 +151,7 @@ export function useMenu() {
           name: row?.name ?? "",
           path: row?.path ?? "",
           component: row?.component ?? "",
-          rank: row?.rank ?? 99,
+          sortOrder: row?.sortOrder ?? 99,
           redirect: row?.redirect ?? "",
           icon: row?.icon ?? "",
           extraIcon: row?.extraIcon ?? "",
