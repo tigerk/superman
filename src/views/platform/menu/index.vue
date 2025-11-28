@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useMenu } from "./utils/hook";
+import { useMenuManager } from "@/views/common/menu/utils/hook";
 import { transformI18n } from "@/plugins/i18n";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
+import {
+  createMenu,
+  deleteMenu,
+  getMenuList
+} from "@/api/platform/menu";
 
 import Delete from "~icons/ep/delete";
 import EditPen from "~icons/ep/edit-pen";
@@ -16,6 +21,7 @@ defineOptions({
 
 const formRef = ref();
 const tableRef = ref();
+
 const {
   form,
   loading,
@@ -26,10 +32,16 @@ const {
   openDialog,
   handleDelete,
   handleSelectionChange
-} = useMenu();
+} = useMenuManager({
+  apis: {
+    list: getMenuList,
+    create: createMenu,
+    delete: deleteMenu
+  },
+  title: "菜单管理"
+});
 
 function onFullscreen() {
-  // 重置表格高度
   tableRef.value.setAdaptive();
 }
 </script>
