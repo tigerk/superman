@@ -206,10 +206,6 @@ function initRouter() {
     } else {
       return new Promise(resolve => {
         getAsyncRoutes().then(resp => {
-          if (resp.code !== 0) {
-            useUserStoreHook().logOut();
-            return;
-          }
           handleAsyncRoutes(cloneDeep(resp.data));
           storageLocal().setItem(key, resp.data);
           resolve(router);
@@ -219,10 +215,6 @@ function initRouter() {
   } else {
     return new Promise(resolve => {
       getAsyncRoutes().then(resp => {
-        if (resp.code !== 0) {
-          useUserStoreHook().logOut();
-          return;
-        }
         handleAsyncRoutes(cloneDeep(resp.data));
         resolve(router);
       });
