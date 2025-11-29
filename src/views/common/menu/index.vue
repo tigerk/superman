@@ -5,10 +5,10 @@ import { transformI18n } from "@/plugins/i18n";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import {
-  createSysMenu,
-  deleteSysMenu,
-  getSysMenuList
-} from "@/api/company/sysMenu";
+  createCompanyMenu,
+  deleteCompanyMenu,
+  getCompanyMenuList
+} from "@/api/company/companyMenu";
 
 import Delete from "~icons/ep/delete";
 import EditPen from "~icons/ep/edit-pen";
@@ -16,7 +16,7 @@ import Refresh from "~icons/ep/refresh";
 import AddFill from "~icons/ri/add-circle-line";
 
 defineOptions({
-  name: "CompanySysMenu"
+  name: "CompanyMenu"
 });
 
 const formRef = ref();
@@ -34,9 +34,9 @@ const {
   handleSelectionChange
 } = useMenuManager({
   apis: {
-    list: getSysMenuList,
-    create: createSysMenu,
-    delete: deleteSysMenu
+    list: getCompanyMenuList,
+    create: createCompanyMenu,
+    delete: deleteCompanyMenu
   },
   title: "菜单管理（仅演示，操作后不生效）",
   isDemo: true

@@ -4,11 +4,7 @@ import { useMenuManager } from "@/views/common/menu/utils/hook";
 import { transformI18n } from "@/plugins/i18n";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import {
-  createMenu,
-  deleteMenu,
-  getMenuList
-} from "@/api/platform/menu";
+import { createMenu, deleteMenu, getMenuList } from "@/api/platform/menu";
 
 import Delete from "~icons/ep/delete";
 import EditPen from "~icons/ep/edit-pen";
