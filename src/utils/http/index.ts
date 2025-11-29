@@ -35,6 +35,10 @@ class PureHttp {
     this.httpInterceptorsResponse();
   }
 
+  private redirectToLogin(): void {
+    useUserStoreHook().logOut();
+  }
+
   /** `token`过期后，暂存待执行的请求 */
   private static requests = [];
 
@@ -123,6 +127,21 @@ class PureHttp {
         const $config = response.config;
         // 关闭进度条动画
         NProgress.done();
+
+        // 检查响应码是否为9999，如果是则跳转到登录页面
+        if (response.data?.code === 9999) {
+          console.warn("响应码9999，跳转到登录页面");
+          // 清除本地存储的token信息
+          this.redirectToLogin();
+
+          // 返回一个被拒绝的Promise，阻止后续处理
+          return Promise.reject({
+            code: 9999,
+            message: "需要重新登录",
+            response
+          });
+        }
+
         // 优先判断post/get等方法是否传入回调，否则执行初始化设置等回调
         if (typeof $config.beforeResponseCallback === "function") {
           $config.beforeResponseCallback(response);
