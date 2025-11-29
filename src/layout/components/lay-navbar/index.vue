@@ -59,9 +59,9 @@ const {
 
     <div v-if="/vertical|double/.test(layout)" class="vertical-header-right">
       <!-- 菜单搜索 -->
-      <LaySearch id="header-search" />
+      <LaySearch v-if="false" id="header-search" />
       <!-- 国际化 -->
-      <el-dropdown id="header-translation" trigger="click">
+      <el-dropdown v-if="false" id="header-translation" trigger="click">
         <GlobalizationIcon
           class="navbar-bg-hover w-[40px] h-[48px] p-[11px] cursor-pointer outline-hidden"
         />
@@ -129,7 +129,7 @@ const {
       <!-- 整体风格 -->
       <LaySidebarOverallStyle id="header-overall" />
       <!-- 消息通知 -->
-      <LayNotice id="header-notice" />
+      <LayNotice v-if="false" id="header-notice" />
       <!-- 退出登录 -->
       <el-dropdown trigger="click">
         <span class="el-dropdown-link navbar-bg-hover select-none">
