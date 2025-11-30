@@ -5,7 +5,7 @@ export default {
   meta: {
     icon: "ep/set-up",
     title: "用户管理",
-    rank: 1,
+    sortOrder: 1,
     showLink: true
   }
 } satisfies RouteConfigsTable;
