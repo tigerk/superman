@@ -31,20 +31,20 @@ export const getCompanyList = (data?: object) => {
 
 /** 获取公司管理-公司列表 */
 export const createCompany = (data?: object) => {
-  return http.request<ResultTable>("post", baseUrlApi("company/create"), {
+  return http.request<Result>("post", baseUrlApi("company/create"), {
     data
   });
 };
 
 export const deleteCompany = (data?: object) => {
-  return http.request<ResultTable>("post", baseUrlApi("company/delete"), {
+  return http.request<Result>("post", baseUrlApi("company/delete"), {
     data
   });
 };
 
 /** 修改公司的启用状态 */
 export const changeCompanyStatus = (data?: object) => {
-  return http.request<ResultTable>(
+  return http.request<Result>(
     "post",
     baseUrlApi("company/status/change"),
     { data }
