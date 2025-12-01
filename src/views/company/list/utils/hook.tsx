@@ -216,7 +216,7 @@ export function useTenantList() {
       /** 邮箱 */
       email: "",
       /** 账号额度 */
-      accountCount: 10,
+      accountCount: 99,
       /** 绑定域名 */
       website: "",
       /** 租户套餐 */
