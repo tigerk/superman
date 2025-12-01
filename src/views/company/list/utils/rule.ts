@@ -3,7 +3,8 @@ import type { FormRules } from "element-plus";
 
 /** 自定义表单规则校验 */
 export const formRules = reactive(<FormRules>{
-  name: [{ required: true, message: "租户名为必填项", trigger: "blur" }],
+  name: [{ required: true, message: "公司名称为必填项", trigger: "blur" }],
+  abbr: [{ required: true, message: "公司简称为必填项", trigger: "blur" }],
   packageId: [{ required: true, message: "租户套餐为必选项", trigger: "blur" }],
   contactName: [{ required: true, message: "联系人为必填项", trigger: "blur" }],
   contactPhone: [
