@@ -62,16 +62,12 @@ export function useRole(treeRef: Ref) {
   });
   const columns: TableColumnList = [
     {
-      label: "角色编号",
-      prop: "id"
+      label: "角色标识",
+      prop: "code"
     },
     {
       label: "角色名称",
       prop: "name"
-    },
-    {
-      label: "角色标识",
-      prop: "code"
     },
     {
       label: "备注",
@@ -94,12 +90,12 @@ export function useRole(treeRef: Ref) {
           onChange={() => onChange(scope as any)}
         />
       ),
-      minWidth: 90
+      width: 100
     },
     {
       label: "创建时间",
       prop: "createTime",
-      minWidth: 160,
+      width: 160,
       formatter: ({ createTime }) =>
         dayjs(createTime).format("YYYY-MM-DD HH:mm:ss")
     },
@@ -168,6 +164,8 @@ export function useRole(treeRef: Ref) {
         onRoleSearch().then(r => {
           console.log(r);
         });
+      } else {
+        message(res.message, { type: "error" });
       }
     });
   }
