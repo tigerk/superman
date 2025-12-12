@@ -1,1 +1,1 @@
-export const baseUrlApi = (url: string) => `/api/nest/${url}`;
+export const baseUrlApi = (url: string) => `/api/platform/${url}`;
