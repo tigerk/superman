@@ -8,23 +8,19 @@ type Result = {
 };
 
 export const createMenu = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("platform/menu/create"), {
+  return http.request<Result>("post", baseUrlApi("menu/create"), {
     data
   });
 };
 
 /** 获取系统管理-菜单管理列表 */
 export const getMenuList = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("platform/menu/list"), {
+  return http.request<Result>("post", baseUrlApi("menu/list"), {
     data
   });
 };
 
 /** 删除系统管理-菜单管理 */
 export const deleteMenu = (data?: object) => {
-  return http.request<Result>(
-    "post",
-    baseUrlApi("platform/menu/delete/" + data),
-    {}
-  );
+  return http.request<Result>("post", baseUrlApi("menu/delete/" + data), {});
 };
