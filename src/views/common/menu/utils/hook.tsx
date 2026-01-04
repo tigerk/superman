@@ -2,7 +2,7 @@ import editForm from "../components/MenuForm.vue";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
 import { transformI18n } from "@/plugins/i18n";
-import { addDialog } from "@/components/ReDialog/index";
+import { addDialog } from "@/components/ReDialog";
 import { h, onMounted, reactive, ref } from "vue";
 import type { FormItemProps, MenuConfig } from "./types";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
@@ -37,12 +37,10 @@ export function useMenuManager(config: MenuConfig) {
       align: "left",
       cellRenderer: ({ row }) => (
         <>
-          <span class="inline-block mr-1">
-            {h(useRenderIcon(row.icon), {
-              style: { paddingTop: "1px" }
-            })}
-          </span>
-          <span>{transformI18n(row.title)}</span>
+          <el-space class="ml-1">
+            <span>{h(useRenderIcon(row.icon), {})}</span>
+            <span>{transformI18n(row.title)}</span>
+          </el-space>
         </>
       )
     },
