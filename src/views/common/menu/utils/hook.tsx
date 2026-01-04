@@ -35,6 +35,7 @@ export function useMenuManager(config: MenuConfig) {
       label: "菜单名称",
       prop: "title",
       align: "left",
+      width: 200,
       cellRenderer: ({ row }) => (
         <>
           <el-space class="ml-1">
@@ -69,6 +70,10 @@ export function useMenuManager(config: MenuConfig) {
     {
       label: "组件路径",
       prop: "component"
+    },
+    {
+      label: "路由重定向",
+      prop: "redirect"
     },
     {
       label: "权限标识",
