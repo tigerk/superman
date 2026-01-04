@@ -179,7 +179,7 @@ const {
 }
 
 .main-content {
-  margin: 24px 24px 0 !important;
+  margin: 12px 12px 0 !important;
 }
 
 .search-form {
