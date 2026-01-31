@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import "vue-json-pretty/lib/styles.css";
 import VueJsonPretty from "vue-json-pretty";
+import PureDescriptions from "@pureadmin/descriptions";
 
 const props = defineProps({
   data: {
@@ -62,20 +63,10 @@ const dataList = ref([
     data: (props.data[0] as any).responseHeaders
   },
   {
-    title: "响应体",
-    name: "responseBody",
-    data: (props.data[0] as any).responseBody
-  },
-  {
     title: "请求头",
     name: "requestHeaders",
     data: (props.data[0] as any).requestHeaders
   },
-  {
-    title: "请求体",
-    name: "requestBody",
-    data: (props.data[0] as any).requestBody
-  }
 ]);
 </script>
 
