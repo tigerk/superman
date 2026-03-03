@@ -28,6 +28,17 @@ const props = withDefaults(defineProps<DictTemplateFormProps>(), {
 const ruleFormRef = ref();
 const newFormInline = ref(props.formInline);
 const isDictMode = computed(() => newFormInline.value.mode === "dict");
+const predefineColors = ref([
+  "#ff4500",
+  "#ff8c00",
+  "#ffd700",
+  "#90ee90",
+  "#00ced1",
+  "#1e90ff",
+  "#c71585",
+  "#3478F6",
+  "#2e7d32"
+]);
 
 function getRef() {
   return ruleFormRef.value;
@@ -42,6 +53,7 @@ defineExpose({ getRef });
     :model="newFormInline"
     :rules="formRules"
     label-width="92px"
+    label-position="top"
   >
     <template v-if="isDictMode">
       <el-form-item label="字典编码" prop="dictCode">
@@ -66,19 +78,27 @@ defineExpose({ getRef });
           class="w-full!"
         />
       </el-form-item>
-      <el-form-item label="状态">
-        <el-switch
-          v-model="newFormInline.status"
-          :active-value="1"
-          :inactive-value="0"
-        />
-      </el-form-item>
-      <el-form-item label="隐藏">
-        <el-switch v-model="newFormInline.hidden" />
-      </el-form-item>
-      <el-form-item label="启用">
-        <el-switch v-model="newFormInline.enabled" />
-      </el-form-item>
+      <el-row :gutter="16">
+        <el-col :span="8">
+          <el-form-item label="状态">
+            <el-switch
+              v-model="newFormInline.status"
+              :active-value="1"
+              :inactive-value="0"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="隐藏">
+            <el-switch v-model="newFormInline.hidden" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="启用">
+            <el-switch v-model="newFormInline.enabled" />
+          </el-form-item>
+        </el-col>
+      </el-row>
     </template>
 
     <template v-else>
@@ -113,21 +133,37 @@ defineExpose({ getRef });
         />
       </el-form-item>
       <el-form-item label="颜色">
-        <el-input v-model="newFormInline.color" />
+        <el-input v-model="newFormInline.color" clearable>
+          <template #append>
+            <el-color-picker
+              v-model="newFormInline.color"
+              color-format="hex"
+              :predefine="predefineColors"
+            />
+          </template>
+        </el-input>
       </el-form-item>
-      <el-form-item label="状态">
-        <el-switch
-          v-model="newFormInline.status"
-          :active-value="1"
-          :inactive-value="0"
-        />
-      </el-form-item>
-      <el-form-item label="可删除">
-        <el-switch v-model="newFormInline.deletable" />
-      </el-form-item>
-      <el-form-item label="启用">
-        <el-switch v-model="newFormInline.enabled" />
-      </el-form-item>
+      <el-row :gutter="16">
+        <el-col :span="8">
+          <el-form-item label="状态">
+            <el-switch
+              v-model="newFormInline.status"
+              :active-value="1"
+              :inactive-value="0"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="可删除">
+            <el-switch v-model="newFormInline.deletable" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="启用">
+            <el-switch v-model="newFormInline.enabled" />
+          </el-form-item>
+        </el-col>
+      </el-row>
     </template>
 
     <el-form-item label="备注">
