@@ -42,12 +42,12 @@ export function useDictTemplate() {
   });
 
   const templateColumns: TableColumnList = [
-    { label: "编码", prop: "dictCode", minWidth: 130 },
+    { label: "编码", prop: "dictCode", minWidth: 180 },
     { label: "名称", prop: "dictName", minWidth: 130 },
     { label: "父编码", prop: "parentCode", width: 100 },
     { label: "版本", prop: "ver", width: 80 },
     { label: "排序", prop: "sortOrder", width: 80 },
-    { label: "操作", slot: "operationTemplate", width: 160 }
+    { label: "操作", slot: "operationTemplate", width: 100 }
   ];
 
   const dataColumns: TableColumnList = [
@@ -56,7 +56,7 @@ export function useDictTemplate() {
     { label: "值", prop: "value", minWidth: 120 },
     { label: "版本", prop: "ver", width: 80 },
     { label: "排序", prop: "sortOrder", width: 80 },
-    { label: "操作", slot: "operationData", width: 160 }
+    { label: "操作", slot: "operationData", width: 100 }
   ];
 
   async function loadTemplateTree() {
