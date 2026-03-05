@@ -27,8 +27,8 @@ const props = withDefaults(defineProps<CompanyFormProps>(), {
     contactPhone: "",
     /** 邮箱 */
     email: "",
-    /** 账号额度 */
-    accountCount: 99,
+    /** 房源数量 */
+    houseCount: 99,
     /** 绑定域名 */
     website: "",
     /** 租户套餐 */
@@ -174,9 +174,9 @@ defineExpose({ getRef });
         </p>
       </el-alert>
     </re-col>
-    <el-form-item label="账号额度" prop="accountCount">
+    <el-form-item label="房源数量" prop="houseCount">
       <el-input-number
-        v-model="newFormInline.accountCount"
+        v-model="newFormInline.houseCount"
         class="w-full!"
         :min="0"
         :max="9999"

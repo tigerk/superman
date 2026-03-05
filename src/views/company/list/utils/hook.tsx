@@ -15,7 +15,7 @@ import type { PaginationProps } from "@pureadmin/table";
 import { h, onMounted, reactive, ref, toRaw } from "vue";
 import { usePublicHooks } from "@/utils/publicHooks";
 
-export function useTenantList() {
+export function useCompanyList() {
   const form = reactive({
     name: "",
     contactName: "",
@@ -58,8 +58,8 @@ export function useTenantList() {
       minWidth: 120
     },
     {
-      label: "账号额度",
-      prop: "accountCount",
+      label: "房源数量",
+      prop: "houseCount",
       minWidth: 120
     },
     {
@@ -215,8 +215,8 @@ export function useTenantList() {
       contactPhone: "",
       /** 邮箱 */
       email: "",
-      /** 账号额度 */
-      accountCount: 99,
+      /** 房源数量 */
+      houseCount: 99,
       /** 绑定域名 */
       website: "",
       /** 租户套餐 */

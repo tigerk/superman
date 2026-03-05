@@ -24,7 +24,7 @@ interface CompanyFormItemProps {
   /** 绑定域名 */
   website: string;
   /** 账号数量 */
-  accountCount: number;
+  houseCount: number;
   /** 租户套餐 */
   packageId: number;
   /** 手机号 */

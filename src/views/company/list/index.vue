@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useTenantList } from "./utils/hook";
+import { useCompanyList } from "./utils/hook";
 import { deviceDetection } from "@pureadmin/utils";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
@@ -32,7 +32,7 @@ const {
   handleSizeChange,
   handleCurrentChange,
   handleSelectionChange
-} = useTenantList();
+} = useCompanyList();
 </script>
 
 <template>

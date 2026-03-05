@@ -16,7 +16,7 @@ export const formRules = reactive(<FormRules>{
   adminPassword: [
     { required: true, message: "管理员密码为必填项", trigger: "blur" }
   ],
-  accountCount: [
-    { required: true, message: "账号额度为必填项", trigger: "blur" }
+  houseCount: [
+    { required: true, message: "房源数量为必填项", trigger: "blur" }
   ]
 });

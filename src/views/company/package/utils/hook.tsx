@@ -58,6 +58,21 @@ export function useTenantPackage(treeRef: Ref) {
       prop: "name"
     },
     {
+      label: "月订阅价（元）",
+      prop: "monthPrice",
+      minWidth: 120
+    },
+    {
+      label: "年订阅价（元）",
+      prop: "yearPrice",
+      minWidth: 120
+    },
+    {
+      label: "房源数量",
+      prop: "houseCount",
+      minWidth: 100
+    },
+    {
       label: "状态",
       cellRenderer: scope => (
         <el-switch
@@ -177,7 +192,7 @@ export function useTenantPackage(treeRef: Ref) {
   const resetForm = formEl => {
     if (!formEl) return;
     formEl.resetFields();
-    onCompanyPackageSearch();
+    onCompanyPackageSearch().then();
   };
 
   function openDialog(title = "新增", row?: CompanyPackageFormItemProps) {
@@ -187,6 +202,9 @@ export function useTenantPackage(treeRef: Ref) {
         formInline: {
           id: row?.id,
           name: row?.name ?? "",
+          monthPrice: row?.monthPrice ?? "",
+          yearPrice: row?.yearPrice ?? "",
+          houseCount: row?.houseCount ?? "",
           remark: row?.remark ?? ""
         }
       },
@@ -204,6 +222,9 @@ export function useTenantPackage(treeRef: Ref) {
           createCompanyPackage({
             id: row?.id,
             name: curData.name,
+            monthPrice: curData.monthPrice,
+            yearPrice: curData.yearPrice,
+            houseCount: curData.houseCount,
             remark: curData.remark
           }).then(resp => {
             if (resp.code == 0) {
