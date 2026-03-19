@@ -50,7 +50,7 @@ export function useTenantPackage(treeRef: Ref) {
   });
   const columns: TableColumnList = [
     {
-      label: "套餐编号",
+      label: "套餐ID",
       prop: "id"
     },
     {

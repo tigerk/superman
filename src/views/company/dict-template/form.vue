@@ -299,7 +299,7 @@ defineExpose({ getRef });
 .switch-group {
   display: flex;
   margin-bottom: 18px;
-  border: 1px solid var(--el-border-color-extra-light);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   overflow: hidden;
   background: var(--el-fill-color-lighter, #f9f9f9);
@@ -315,7 +315,7 @@ defineExpose({ getRef });
   padding: 12px 8px;
 
   & + & {
-    border-left: 1px solid var(--el-border-color-extra-light);
+    border-left: 1px solid var(--el-border-color-light);
   }
 }
 
