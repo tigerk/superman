@@ -6,6 +6,12 @@ import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import type { FormInstance } from "element-plus";
 import type { PaginationProps } from "@pureadmin/table";
+import type {
+  TrialApplicationHandleDto,
+  TrialApplicationQueryDto,
+  TrialApplicationStatusEnum,
+  TrialApplicationVo
+} from "@/types/generated";
 import {
   getTrialApplicationList,
   handleTrialApplication
@@ -18,21 +24,21 @@ defineOptions({
 
 const formRef = ref<FormInstance>();
 const loading = ref(true);
-const dataList = ref([]);
+const dataList = ref<TrialApplicationVo[]>([]);
 const dialogVisible = ref(false);
 const submitLoading = ref(false);
-const currentRow = ref();
+const currentRow = ref<TrialApplicationVo | null>(null);
 
-const form = reactive({
+const form = reactive<TrialApplicationQueryDto>({
   phone: "",
   cityName: "",
-  status: ""
+  status: undefined
 });
 
 const handleFormRef = ref<FormInstance>();
-const handleForm = reactive({
-  id: null,
-  status: 1,
+const handleForm = reactive<TrialApplicationHandleDto>({
+  id: "",
+  status: 1 as TrialApplicationStatusEnum,
   handleRemark: ""
 });
 
@@ -148,9 +154,12 @@ const resetForm = async (formEl?: FormInstance) => {
   await onSearch();
 };
 
-const openHandleDialog = (row: any, status: number) => {
+const openHandleDialog = (
+  row: TrialApplicationVo,
+  status: TrialApplicationStatusEnum
+) => {
   currentRow.value = row;
-  handleForm.id = row.id;
+  handleForm.id = row.id || "";
   handleForm.status = status;
   handleForm.handleRemark = "";
   dialogVisible.value = true;

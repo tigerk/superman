@@ -1,25 +1,14 @@
 import { http } from "@/utils/http";
 import { baseUrlApi } from "../utils";
+import type {
+  ResponseResultBoolean,
+  ResponseResultPageVoTrialApplicationVo,
+  TrialApplicationHandleDto,
+  TrialApplicationQueryDto
+} from "@/types/generated";
 
-type Result = {
-  code: number;
-  message: string;
-  data?: any;
-};
-
-type ResultTable = {
-  code: number;
-  message: string;
-  data?: {
-    list: Array<any>;
-    total?: number;
-    pageSize?: number;
-    currentPage?: number;
-  };
-};
-
-export const getTrialApplicationList = (data?: object) => {
-  return http.request<ResultTable>(
+export const getTrialApplicationList = (data?: TrialApplicationQueryDto) => {
+  return http.request<ResponseResultPageVoTrialApplicationVo>(
     "post",
     baseUrlApi("trialApplication/list"),
     {
@@ -28,8 +17,12 @@ export const getTrialApplicationList = (data?: object) => {
   );
 };
 
-export const handleTrialApplication = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("trialApplication/handle"), {
-    data
-  });
+export const handleTrialApplication = (data?: TrialApplicationHandleDto) => {
+  return http.request<ResponseResultBoolean>(
+    "post",
+    baseUrlApi("trialApplication/handle"),
+    {
+      data
+    }
+  );
 };
