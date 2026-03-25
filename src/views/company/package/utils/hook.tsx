@@ -73,6 +73,15 @@ export function useTenantPackage(treeRef: Ref) {
       minWidth: 100
     },
     {
+      label: "注册默认",
+      minWidth: 100,
+      cellRenderer: scope => (
+        <el-tag type={scope.row.registerDefault === 1 ? "success" : "info"}>
+          {scope.row.registerDefault === 1 ? "是" : "否"}
+        </el-tag>
+      )
+    },
+    {
       label: "状态",
       cellRenderer: scope => (
         <el-switch
@@ -205,6 +214,7 @@ export function useTenantPackage(treeRef: Ref) {
           monthPrice: row?.monthPrice ?? "",
           yearPrice: row?.yearPrice ?? "",
           houseCount: row?.houseCount ?? "",
+          registerDefault: row?.registerDefault ?? 0,
           remark: row?.remark ?? ""
         }
       },
@@ -225,6 +235,7 @@ export function useTenantPackage(treeRef: Ref) {
             monthPrice: curData.monthPrice,
             yearPrice: curData.yearPrice,
             houseCount: curData.houseCount,
+            registerDefault: curData.registerDefault,
             remark: curData.remark
           }).then(resp => {
             if (resp.code == 0) {

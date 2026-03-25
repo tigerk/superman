@@ -8,6 +8,8 @@ interface CompanyPackageFormItemProps {
   yearPrice?: number | string;
   /** 房源数量 */
   houseCount: number | string;
+  /** 是否为注册默认套餐 */
+  registerDefault: number;
   /** 备注 */
   remark: string;
 }

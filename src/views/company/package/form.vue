@@ -10,6 +10,7 @@ const props = withDefaults(defineProps<CompanyPackageFormProps>(), {
     monthPrice: "",
     yearPrice: "",
     houseCount: "",
+    registerDefault: 0,
     remark: ""
   })
 });
@@ -92,6 +93,18 @@ defineExpose({ getRef });
             :step="1"
             controls-position="right"
             placeholder="请输入房源数量"
+          />
+        </el-form-item>
+      </re-col>
+      <re-col :value="8" :xs="24" :sm="24" class="px-2">
+        <el-form-item label="注册默认">
+          <el-switch
+            v-model="newFormInline.registerDefault"
+            :active-value="1"
+            :inactive-value="0"
+            inline-prompt
+            active-text="是"
+            inactive-text="否"
           />
         </el-form-item>
       </re-col>
