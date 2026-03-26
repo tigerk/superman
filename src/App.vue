@@ -3,7 +3,6 @@
     <router-view />
     <ReDialog />
     <ReDrawer />
-    <ReFloatButton :floatBtns="floatBtns" />
   </el-config-provider>
 </template>
 
@@ -31,8 +30,7 @@ export default defineComponent({
   components: {
     [ElConfigProvider.name]: ElConfigProvider,
     ReDialog,
-    ReDrawer,
-    ReFloatButton
+    ReDrawer
   },
   computed: {
     currentLocale() {
