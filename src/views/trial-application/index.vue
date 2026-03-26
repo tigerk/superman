@@ -258,7 +258,7 @@ onMounted(() => {
           showOverflowTooltip
           table-layout="auto"
           adaptive
-          :adaptiveConfig="{ offsetBottom: 108 }"
+          :adaptiveConfig="{ offsetBottom: 82 }"
           :loading="loading"
           :size="size"
           :data="dataList"

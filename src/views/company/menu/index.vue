@@ -99,7 +99,7 @@ function onFullscreen() {
         <pure-table
           ref="tableRef"
           adaptive
-          :adaptiveConfig="{ offsetBottom: 45 }"
+          :adaptiveConfig="{ offsetBottom: 17 }"
           align-whole="center"
           row-key="id"
           showOverflowTooltip
@@ -165,7 +165,7 @@ function onFullscreen() {
 }
 
 .main-content {
-  margin: 12px 12px 0 !important;
+  margin: 8px 8px 0 !important;
 }
 
 .search-form {

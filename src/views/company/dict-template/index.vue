@@ -218,7 +218,7 @@ const {
   align-items: center;
   justify-content: space-between;
   padding: 18px 22px;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   background: var(--el-bg-color);
   border-radius: 10px;
   box-shadow:

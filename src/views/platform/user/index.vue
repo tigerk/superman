@@ -113,7 +113,7 @@ const {
             ref="tableRef"
             row-key="id"
             adaptive
-            :adaptiveConfig="{ offsetBottom: 108 }"
+            :adaptiveConfig="{ offsetBottom: 82 }"
             align-whole="center"
             table-layout="auto"
             :loading="loading"
@@ -208,7 +208,7 @@ const {
 }
 
 .main-content {
-  margin: 12px 12px 0 !important;
+  margin: 8px 8px 0 !important;
 }
 
 .search-form {

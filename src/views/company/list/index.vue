@@ -117,7 +117,7 @@ const {
           :loading="loading"
           :size="size"
           adaptive
-          :adaptiveConfig="{ offsetBottom: 108 }"
+          :adaptiveConfig="{ offsetBottom: 82 }"
           :data="dataList"
           :columns="dynamicColumns"
           :pagination="{ ...pagination, size }"
@@ -179,7 +179,7 @@ const {
 }
 
 .main-content {
-  margin: 12px 12px 0 !important;
+  margin: 8px 8px 0 !important;
 }
 
 .search-form {
