@@ -240,18 +240,6 @@ useEventListener(document, "keydown", ({ code }) => {
                   @click="onLogin(ruleFormRef)"
                   >登 录</el-button
                 >
-
-                <div class="switch-page">
-                  <el-space>
-                    <span>没有账户？</span>
-                    <el-button
-                      link
-                      type="primary"
-                      @click="currentPage = 'register'"
-                      >立即注册</el-button
-                    >
-                  </el-space>
-                </div>
               </el-form>
             </Motion>
 
@@ -659,7 +647,7 @@ useEventListener(document, "keydown", ({ code }) => {
 }
 
 .form-card {
-  padding: 48px;
+  padding: 48px 48px 30px 48px;
   background: white;
   border-radius: 20px;
   box-shadow: 0 10px 40px rgb(0 0 0 / 8%);
