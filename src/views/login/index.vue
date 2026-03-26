@@ -11,20 +11,20 @@ import type { FormInstance } from "element-plus";
 import { useLayout } from "@/layout/hooks/useLayout";
 import { useUserStoreHook } from "@/store/modules/user";
 import { initRouter, getTopMenu } from "@/router/utils";
-import { ref, reactive } from "vue";
-import { useTranslationLang } from "@/layout/hooks/useTranslationLang";
+import { computed, reactive, ref } from "vue";
 import { useDataThemeChange } from "@/layout/hooks/useDataThemeChange";
-import ReImageVerify from "@/components/ReImageVerify";
-
-// 导入拆分的组件
-import LoginRegister from "./components/LoginRegister.vue";
 import LoginUpdate from "./components/LoginUpdate.vue";
-
 import User from "~icons/ri/user-3-fill";
 import Lock from "~icons/ri/lock-fill";
 import Eye from "~icons/ri/eye-line";
 import EyeOff from "~icons/ri/eye-off-line";
-import Shield from "~icons/ri/shield-keyhole-line";
+import ArrowRight from "~icons/ri/arrow-right-line";
+import ShieldCheck from "~icons/ri/shield-check-line";
+import Building from "~icons/ri/building-2-line";
+import HomeOffice from "~icons/ri/home-office-line";
+import Sparkles from "~icons/ri/sparkling-2-line";
+import dayIcon from "@/assets/svg/day.svg?component";
+import darkIcon from "@/assets/svg/dark.svg?component";
 
 defineOptions({
   name: "Login"
@@ -35,14 +35,7 @@ const loading = ref(false);
 const showPassword = ref(false);
 const disabled = ref(false);
 const ruleFormRef = ref<FormInstance>();
-const currentPage = ref("login"); // login | register | forgot
-const imageVerifyRef = ref();
-
-// 图形验证码相关
-const imgCode = ref("");
-const showImageVerify = ref(false);
-const userInputCode = ref("");
-const verifyCallback = ref<(() => void) | null>(null);
+const currentPage = ref("login");
 
 const { t } = useI18n();
 const { initStorage } = useLayout();
@@ -50,86 +43,90 @@ initStorage();
 const { dataTheme, themeMode, dataThemeChange } = useDataThemeChange();
 dataThemeChange(themeMode.value);
 const { title, getLogo } = useNav();
-const { locale, translationCh, translationEn } = useTranslationLang();
 
-// 登录表单
 const loginForm = reactive({
   username: "",
   password: ""
 });
 
-// 登录处理
+const pageMeta = computed(() => {
+  if (currentPage.value === "forgot") {
+    return {
+      badge: "密码找回",
+      title: "找回租房 SaaS 平台账号",
+      desc: "通过手机号和短信验证码完成身份校验，重新设置平台管理员密码。",
+      accent: "校验管理员身份并重置登录密码"
+    };
+  }
+  return {
+    badge: "平台登录",
+    title: "登录租房平台管理后台",
+    desc: "面向租房 SaaS 平台运营方的统一登录入口，用于进入平台管理后台。",
+    accent: "登录平台管理 & 运营工作台"
+  };
+});
+
+const capabilityList = [
+  {
+    title: "统一平台管理",
+    desc: "通过统一后台处理平台日常管理事务，保持核心配置与运营动作集中可控。",
+    icon: Building
+  },
+  {
+    title: "稳定系统运营",
+    desc: "围绕租房 SaaS 的平台运营场景，提供清晰、稳定、可持续的后台管理体验。",
+    icon: HomeOffice
+  },
+  {
+    title: "高效协同交付",
+    desc: "让平台配置、业务支持与系统维护在同一入口协同推进，提升整体运转效率。",
+    icon: Sparkles
+  }
+];
+
+const currentCapabilityList = computed(() =>
+  currentPage.value === "forgot" ? capabilityList.slice(0, 2) : capabilityList
+);
+
+const assuranceList = [
+  "统一的平台后台入口",
+  "清晰的管理与运营体验",
+  "安全的账号找回与登录校验"
+];
+
+const showAssurancePanel = computed(() => currentPage.value === "login");
+
 const onLogin = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate(valid => {
-    if (valid) {
-      loading.value = true;
-      useUserStoreHook()
-        .loginByUsername({
-          username: loginForm.username,
-          password: loginForm.password
-        })
-        .then(res => {
-          if (res.code == 0) {
-            return initRouter().then(() => {
-              disabled.value = true;
-              router
-                .push(getTopMenu(true).path)
-                .then(() => {
-                  message(t("login.pureLoginSuccess"), { type: "success" });
-                })
-                .finally(() => (disabled.value = false));
-            });
-          } else {
-            message(res.message, { type: "error" });
-          }
-        })
-        .finally(() => (loading.value = false));
-    }
+    if (!valid) return;
+    loading.value = true;
+    useUserStoreHook()
+      .loginByUsername({
+        username: loginForm.username,
+        password: loginForm.password
+      })
+      .then(res => {
+        if (res.code !== 0) {
+          message(res.message, { type: "error" });
+          return;
+        }
+        return initRouter().then(() => {
+          disabled.value = true;
+          router
+            .push(getTopMenu(true).path)
+            .then(() => {
+              message(t("login.pureLoginSuccess"), { type: "success" });
+            })
+            .finally(() => (disabled.value = false));
+        });
+      })
+      .finally(() => (loading.value = false));
   });
 };
 
-// 切换页面
 const switchPage = (page: string) => {
   currentPage.value = page;
-};
-
-// 显示图形验证码对话框
-const showImageVerifyDialog = (callback: () => void) => {
-  verifyCallback.value = callback;
-  showImageVerify.value = true;
-  userInputCode.value = "";
-};
-
-// 确认图形验证码
-const confirmImageVerify = () => {
-  if (!userInputCode.value) {
-    message("请输入图形验证码", { type: "warning" });
-    return;
-  }
-
-  if (userInputCode.value.toLowerCase() !== imgCode.value.toLowerCase()) {
-    message("图形验证码错误", { type: "error" });
-    imageVerifyRef.value?.getImgCode();
-    userInputCode.value = "";
-    return;
-  }
-
-  // 图形验证码正确，关闭对话框并执行回调
-  showImageVerify.value = false;
-  userInputCode.value = "";
-
-  if (verifyCallback.value) {
-    verifyCallback.value();
-    verifyCallback.value = null;
-  }
-};
-
-// 取消图形验证码
-const cancelImageVerify = () => {
-  showImageVerify.value = false;
-  userInputCode.value = "";
-  verifyCallback.value = null;
 };
 
 const immediateDebounce: any = debounce(
@@ -151,723 +148,675 @@ useEventListener(document, "keydown", ({ code }) => {
 </script>
 
 <template>
-  <div class="login-wrapper">
-    <!-- 左侧区域 -->
-    <div class="left-section">
-      <!-- 背景装饰 -->
-      <div class="background-pattern">
-        <div class="circle circle-1" />
-        <div class="circle circle-2" />
-        <div class="circle circle-3" />
-      </div>
+  <div :class="['saas-login', dataTheme ? 'dark' : '']">
+    <div class="saas-login__bg">
+      <div class="bg-orb orb-a" />
+      <div class="bg-orb orb-b" />
+      <div class="bg-grid" />
+    </div>
 
-      <!-- 顶部操作栏 -->
-      <div class="header-bar">
-        <div class="logo-section">
-          <img :src="getLogo()" alt="logo" />
-          <span class="logo-title">{{ title }}</span>
+    <header class="saas-login__header">
+      <div class="brand">
+        <img :src="getLogo()" alt="logo" class="brand__logo" />
+        <div class="brand__text">
+          <span class="brand__name">{{ title }}</span>
+          <span class="brand__tag">Rental SaaS Platform</span>
         </div>
       </div>
+      <el-switch
+        v-model="dataTheme"
+        inline-prompt
+        :active-icon="dayIcon"
+        :inactive-icon="darkIcon"
+        @change="dataThemeChange"
+      />
+    </header>
 
-      <!-- 表单容器 -->
-      <div class="form-container">
-        <div class="form-section">
-          <div class="form-card">
-            <!-- 登录页面 -->
-            <Motion v-if="currentPage === 'login'" key="login">
-              <div class="form-header">
-                <h1 class="form-title">欢迎使用{{ title }}</h1>
-                <p class="form-subtitle">登录您的账户以继续</p>
+    <main class="saas-login__main">
+      <section
+        :class="[
+          'hero-panel',
+          { 'hero-panel--compact': currentPage === 'forgot' }
+        ]"
+      >
+        <Motion>
+          <div class="hero-pill">
+            <el-icon><ShieldCheck /></el-icon>
+            <span>{{ pageMeta.badge }}</span>
+          </div>
+        </Motion>
+
+        <Motion :delay="40">
+          <h1 class="hero-title">{{ pageMeta.title }}</h1>
+        </Motion>
+
+        <Motion :delay="80">
+          <p class="hero-desc">{{ pageMeta.desc }}</p>
+        </Motion>
+
+        <Motion :delay="120">
+          <div class="hero-accent">
+            <span class="hero-accent__label">当前任务</span>
+            <strong>{{ pageMeta.accent }}</strong>
+          </div>
+        </Motion>
+
+        <Motion :delay="160">
+          <div class="capability-list">
+            <article
+              v-for="item in currentCapabilityList"
+              :key="item.title"
+              class="capability-card"
+            >
+              <div class="capability-card__icon">
+                <el-icon><component :is="item.icon" /></el-icon>
+              </div>
+              <div>
+                <h3>{{ item.title }}</h3>
+                <p>{{ item.desc }}</p>
+              </div>
+            </article>
+          </div>
+        </Motion>
+
+        <Motion v-if="showAssurancePanel" :delay="200">
+          <div class="assurance-panel">
+            <div class="assurance-panel__title">平台能力</div>
+            <div class="assurance-panel__list">
+              <span
+                v-for="item in assuranceList"
+                :key="item"
+                class="assurance-chip"
+              >
+                {{ item }}
+              </span>
+            </div>
+          </div>
+        </Motion>
+      </section>
+
+      <section class="auth-panel">
+        <div class="auth-card">
+          <Motion v-if="currentPage === 'login'" key="login">
+            <div class="auth-card__header">
+              <div class="auth-card__eyebrow">平台账号登录</div>
+              <h2 class="auth-card__title">登录租房管理平台</h2>
+              <p class="auth-card__desc">使用平台账号登录，进入租房平台。</p>
+            </div>
+
+            <el-form
+              ref="ruleFormRef"
+              :model="loginForm"
+              :rules="loginRules"
+              class="auth-form"
+            >
+              <el-form-item prop="username">
+                <template #label>
+                  <span class="field-label">账号</span>
+                </template>
+                <el-input
+                  v-model="loginForm.username"
+                  size="large"
+                  clearable
+                  placeholder="请输入用户名或手机号"
+                >
+                  <template #prefix>
+                    <el-icon>
+                      <User />
+                    </el-icon>
+                  </template>
+                </el-input>
+              </el-form-item>
+
+              <el-form-item prop="password">
+                <template #label>
+                  <span class="field-label">密码</span>
+                </template>
+                <el-input
+                  v-model="loginForm.password"
+                  size="large"
+                  :type="showPassword ? 'text' : 'password'"
+                  placeholder="请输入登录密码"
+                >
+                  <template #prefix>
+                    <el-icon>
+                      <Lock />
+                    </el-icon>
+                  </template>
+                  <template #suffix>
+                    <el-icon
+                      class="cursor-pointer"
+                      @click="showPassword = !showPassword"
+                    >
+                      <Eye v-if="showPassword" />
+                      <EyeOff v-else />
+                    </el-icon>
+                  </template>
+                </el-input>
+              </el-form-item>
+
+              <div class="auth-form__row">
+                <span class="auth-form__hint">请使用平台管理员账号登录</span>
+                <button
+                  type="button"
+                  class="auth-link"
+                  @click="currentPage = 'forgot'"
+                >
+                  忘记密码
+                </button>
               </div>
 
-              <el-form
-                ref="ruleFormRef"
-                :model="loginForm"
-                :rules="loginRules"
-                class="auth-form"
+              <button
+                type="button"
+                class="auth-submit"
+                :disabled="disabled || loading"
+                @click="onLogin(ruleFormRef)"
               >
-                <el-form-item prop="username">
-                  <el-input
-                    v-model="loginForm.username"
-                    size="large"
-                    clearable
-                    placeholder="用户名 / 手机号 / 邮箱"
-                  >
-                    <template #prefix>
-                      <el-icon>
-                        <User />
-                      </el-icon>
-                    </template>
-                  </el-input>
-                </el-form-item>
+                <span>{{ loading ? "登录中..." : "立即登录" }}</span>
+                <el-icon><ArrowRight /></el-icon>
+              </button>
+            </el-form>
+          </Motion>
 
-                <el-form-item prop="password">
-                  <el-input
-                    v-model="loginForm.password"
-                    size="large"
-                    :type="showPassword ? 'text' : 'password'"
-                    placeholder="请输入密码"
-                  >
-                    <template #prefix>
-                      <el-icon>
-                        <Lock />
-                      </el-icon>
-                    </template>
-                    <template #suffix>
-                      <el-icon
-                        class="cursor-pointer"
-                        @click="showPassword = !showPassword"
-                      >
-                        <Eye v-if="showPassword" />
-                        <EyeOff v-else />
-                      </el-icon>
-                    </template>
-                  </el-input>
-                </el-form-item>
-
-                <div class="form-actions">
-                  <el-button link type="primary" @click="currentPage = 'forgot'"
-                    >忘记密码？</el-button
-                  >
-                </div>
-
-                <el-button
-                  type="primary"
-                  size="large"
-                  class="submit-btn"
-                  :loading="loading"
-                  :disabled="disabled"
-                  @click="onLogin(ruleFormRef)"
-                  >登 录</el-button
-                >
-              </el-form>
-            </Motion>
-
-            <!-- 注册页面 - 使用拆分的组件 -->
-            <LoginRegister
-              v-if="currentPage === 'register'"
-              @switch-page="switchPage"
-              @show-image-verify="showImageVerifyDialog"
-            />
-
-            <!-- 忘记密码页面 - 使用拆分的组件 -->
-            <LoginUpdate
-              v-if="currentPage === 'forgot'"
-              @switch-page="switchPage"
-              @show-image-verify="showImageVerifyDialog"
-            />
-          </div>
+          <LoginUpdate
+            v-if="currentPage === 'forgot'"
+            @switch-page="switchPage"
+          />
         </div>
-      </div>
-
-      <!-- 底部信息 -->
-      <footer class="footer">
-        <p>© 2025 {{ title }}. All rights reserved.</p>
-      </footer>
-    </div>
-
-    <!-- 右侧展示区域 -->
-    <div class="display-section">
-      <div class="display-content">
-        <!-- 动态插画 -->
-        <div class="illustration-wrapper">
-          <svg
-            class="illustration"
-            viewBox="0 0 500 400"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <defs>
-              <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop
-                  offset="0%"
-                  style="stop-color: #ef4444; stop-opacity: 1"
-                />
-                <stop
-                  offset="100%"
-                  style="stop-color: #dc2626; stop-opacity: 1"
-                />
-              </linearGradient>
-              <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop
-                  offset="0%"
-                  style="stop-color: #f87171; stop-opacity: 1"
-                />
-                <stop
-                  offset="100%"
-                  style="stop-color: #ef4444; stop-opacity: 1"
-                />
-              </linearGradient>
-            </defs>
-
-            <!-- 背景圆圈 -->
-            <circle cx="250" cy="200" r="100" fill="url(#grad1)" opacity="0.1">
-              <animate
-                attributeName="r"
-                values="100;120;100"
-                dur="4s"
-                repeatCount="indefinite"
-              />
-            </circle>
-            <circle cx="250" cy="200" r="80" fill="url(#grad1)" opacity="0.2">
-              <animate
-                attributeName="r"
-                values="80;90;80"
-                dur="4s"
-                repeatCount="indefinite"
-              />
-            </circle>
-            <circle cx="250" cy="200" r="60" fill="url(#grad1)" opacity="0.3">
-              <animate
-                attributeName="r"
-                values="60;70;60"
-                dur="4s"
-                repeatCount="indefinite"
-              />
-            </circle>
-
-            <!-- 动态波浪 -->
-            <path
-              d="M0,200 Q125,150 250,200 T500,200"
-              stroke="url(#grad2)"
-              stroke-width="4"
-              fill="none"
-              opacity="0.5"
-            >
-              <animate
-                attributeName="d"
-                values="M0,200 Q125,150 250,200 T500,200; M0,200 Q125,250 250,200 T500,200"
-                dur="4s"
-                repeatCount="indefinite"
-              />
-            </path>
-
-            <!-- 数据点 -->
-            <circle cx="180" cy="150" r="6" fill="#EF4444">
-              <animate
-                attributeName="opacity"
-                values="0;1;0"
-                dur="2s"
-                repeatCount="indefinite"
-              />
-            </circle>
-            <circle cx="320" cy="170" r="6" fill="#DC2626">
-              <animate
-                attributeName="opacity"
-                values="0;1;0"
-                dur="2s"
-                begin="0.5s"
-                repeatCount="indefinite"
-              />
-            </circle>
-            <circle cx="290" cy="250" r="6" fill="#F87171">
-              <animate
-                attributeName="opacity"
-                values="0;1;0"
-                dur="2s"
-                begin="1s"
-                repeatCount="indefinite"
-              />
-            </circle>
-            <circle cx="210" cy="240" r="6" fill="#B91C1C">
-              <animate
-                attributeName="opacity"
-                values="0;1;0"
-                dur="2s"
-                begin="1.5s"
-                repeatCount="indefinite"
-              />
-            </circle>
-
-            <!-- 连线 -->
-            <path
-              d="M180,150 Q250,120 320,170"
-              stroke="url(#grad1)"
-              stroke-width="2"
-              fill="none"
-              opacity="0.3"
-            >
-              <animate
-                attributeName="stroke-dasharray"
-                values="0,300;300,0"
-                dur="3s"
-                repeatCount="indefinite"
-              />
-            </path>
-            <path
-              d="M320,170 Q350,200 290,250"
-              stroke="url(#grad2)"
-              stroke-width="2"
-              fill="none"
-              opacity="0.3"
-            >
-              <animate
-                attributeName="stroke-dasharray"
-                values="0,300;300,0"
-                dur="3s"
-                begin="1s"
-                repeatCount="indefinite"
-              />
-            </path>
-
-            <!-- 装饰性元素 -->
-            <rect
-              x="100"
-              y="300"
-              width="60"
-              height="4"
-              rx="2"
-              fill="url(#grad1)"
-              opacity="0.5"
-            />
-            <rect
-              x="100"
-              y="310"
-              width="100"
-              height="4"
-              rx="2"
-              fill="url(#grad2)"
-              opacity="0.3"
-            />
-            <rect
-              x="100"
-              y="320"
-              width="80"
-              height="4"
-              rx="2"
-              fill="url(#grad1)"
-              opacity="0.4"
-            />
-
-            <rect
-              x="320"
-              y="300"
-              width="80"
-              height="4"
-              rx="2"
-              fill="url(#grad2)"
-              opacity="0.4"
-            />
-            <rect
-              x="300"
-              y="310"
-              width="100"
-              height="4"
-              rx="2"
-              fill="url(#grad1)"
-              opacity="0.5"
-            />
-            <rect
-              x="340"
-              y="320"
-              width="60"
-              height="4"
-              rx="2"
-              fill="url(#grad2)"
-              opacity="0.3"
-            />
-          </svg>
-        </div>
-        <p class="display-description">
-          superman 构建高效、安全、智能的管理系统
-        </p>
-      </div>
-    </div>
-
-    <!-- 图形验证码对话框 - 统一在父组件管理 -->
-    <el-dialog
-      v-model="showImageVerify"
-      title="请输入图形验证码"
-      width="360px"
-      :close-on-click-modal="false"
-    >
-      <div class="image-verify-container">
-        <div class="verify-image-wrapper">
-          <ReImageVerify ref="imageVerifyRef" v-model:code="imgCode" />
-        </div>
-        <el-input
-          v-model="userInputCode"
-          placeholder="请输入图形验证码"
-          size="large"
-          maxlength="4"
-          clearable
-          @keyup.enter="confirmImageVerify"
-        >
-          <template #prefix>
-            <el-icon>
-              <Shield />
-            </el-icon>
-          </template>
-        </el-input>
-        <p class="verify-tip">点击图片可刷新验证码</p>
-      </div>
-      <template #footer>
-        <el-button @click="cancelImageVerify">取消</el-button>
-        <el-button type="primary" @click="confirmImageVerify">确定</el-button>
-      </template>
-    </el-dialog>
+      </section>
+    </main>
   </div>
 </template>
 
 <style scoped lang="scss">
-/* 响应式设计 */
-@media (width <= 1024px) {
-  .display-section {
-    display: none;
+.saas-login {
+  --login-bg: linear-gradient(135deg, #f4f7fb 0%, #e8eef8 42%, #dce7f8 100%);
+  --login-panel: rgba(255, 255, 255, 0.78);
+  --login-card: rgba(255, 255, 255, 0.92);
+  --login-border: rgba(134, 156, 184, 0.18);
+  --login-title: #10233d;
+  --login-text: #47607b;
+  --login-muted: #6f8197;
+  --login-primary: #2364ff;
+  --login-primary-strong: #0b4ddd;
+  --login-shadow: 0 30px 80px rgba(24, 50, 84, 0.14);
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--login-bg);
+}
+
+.saas-login.dark {
+  --login-bg: linear-gradient(135deg, #09121f 0%, #101b2f 48%, #0b1426 100%);
+  --login-panel: rgba(11, 19, 35, 0.72);
+  --login-card: rgba(12, 22, 39, 0.84);
+  --login-border: rgba(96, 124, 165, 0.2);
+  --login-title: #f5f8ff;
+  --login-text: #b0bfd5;
+  --login-muted: #89a0bd;
+  --login-primary: #5c93ff;
+  --login-primary-strong: #82a8ff;
+  --login-shadow: 0 36px 90px rgba(0, 0, 0, 0.34);
+}
+
+.saas-login__bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.bg-orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(10px);
+}
+
+.orb-a {
+  top: -120px;
+  left: -60px;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(
+    circle,
+    rgba(85, 142, 255, 0.28) 0%,
+    rgba(85, 142, 255, 0) 72%
+  );
+}
+
+.orb-b {
+  right: -100px;
+  bottom: -140px;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(
+    circle,
+    rgba(34, 197, 94, 0.16) 0%,
+    rgba(34, 197, 94, 0) 74%
+  );
+}
+
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.7), transparent 88%);
+  opacity: 0.3;
+}
+
+.saas-login__header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 40px 0;
+}
+
+.brand {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.brand__logo {
+  display: block;
+  height: 38px;
+}
+
+.brand__text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand__name {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--login-title);
+}
+
+.brand__tag {
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--login-muted);
+  text-transform: uppercase;
+}
+
+.saas-login__main {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 460px);
+  gap: 28px;
+  align-items: start;
+  width: min(1380px, 100%);
+  height: calc(100vh - 96px);
+  padding: 24px 40px 32px;
+  margin: 0 auto;
+}
+
+.hero-panel {
+  align-self: start;
+  max-width: 760px;
+  padding: 34px 36px;
+  background: var(--login-panel);
+  border: 1px solid var(--login-border);
+  border-radius: 28px;
+  box-shadow: var(--login-shadow);
+  backdrop-filter: blur(18px);
+}
+
+.hero-panel--compact {
+  padding-bottom: 26px;
+}
+
+.hero-pill {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 14px;
+  margin-bottom: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--login-primary);
+  background: rgba(35, 100, 255, 0.1);
+  border: 1px solid rgba(35, 100, 255, 0.14);
+  border-radius: 999px;
+}
+
+.hero-title {
+  max-width: 600px;
+  margin: 0 0 12px;
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--login-title);
+}
+
+.hero-desc {
+  max-width: 560px;
+  margin: 0 0 20px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--login-text);
+}
+
+.hero-accent {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  margin-bottom: 22px;
+  border-left: 4px solid var(--login-primary);
+  background: rgba(255, 255, 255, 0.28);
+  border-radius: 16px;
+}
+
+.hero-accent__label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--login-muted);
+  text-transform: uppercase;
+}
+
+.hero-accent strong {
+  font-size: 17px;
+  color: var(--login-title);
+}
+
+.capability-list {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.capability-card {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.36);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 18px;
+}
+
+.capability-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  font-size: 21px;
+  color: var(--login-primary);
+  background: rgba(35, 100, 255, 0.1);
+  border-radius: 16px;
+}
+
+.capability-card h3 {
+  margin: 2px 0 6px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--login-title);
+}
+
+.capability-card p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--login-text);
+}
+
+.assurance-panel {
+  padding: 18px 20px;
+  background: rgba(16, 35, 61, 0.05);
+  border: 1px solid var(--login-border);
+  border-radius: 20px;
+}
+
+.assurance-panel__title {
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--login-title);
+}
+
+.assurance-panel__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.assurance-chip {
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--login-text);
+  background: rgba(255, 255, 255, 0.38);
+  border: 1px solid var(--login-border);
+  border-radius: 999px;
+}
+
+.auth-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+  align-self: start;
+  width: 100%;
+}
+
+.auth-card {
+  width: 100%;
+  align-self: start;
+  max-width: 460px;
+  margin-left: auto;
+  padding: 28px 28px 24px;
+  background: var(--login-card);
+  border: 1px solid var(--login-border);
+  border-radius: 26px;
+  box-shadow: var(--login-shadow);
+  backdrop-filter: blur(18px);
+}
+
+.auth-card__header {
+  margin-bottom: 22px;
+}
+
+.auth-card__eyebrow {
+  margin-bottom: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--login-primary);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.auth-card__title {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--login-title);
+}
+
+.auth-card__desc {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--login-text);
+}
+
+.auth-form :deep(.el-form-item) {
+  margin-bottom: 18px;
+}
+
+.auth-form :deep(.el-form-item__label) {
+  padding-bottom: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--login-title);
+}
+
+.field-label {
+  color: var(--login-title);
+}
+
+.auth-form :deep(.el-input__wrapper) {
+  min-height: 54px;
+  padding: 0 16px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--login-border);
+  border-radius: 18px;
+  box-shadow: none !important;
+}
+
+.saas-login.dark .auth-form :deep(.el-input__wrapper) {
+  background: rgba(7, 16, 28, 0.88);
+}
+
+.auth-form :deep(.el-input__wrapper.is-focus) {
+  border-color: var(--login-primary);
+  box-shadow: 0 0 0 3px rgba(35, 100, 255, 0.14) !important;
+}
+
+.auth-form :deep(.el-input__inner) {
+  height: 46px;
+  font-size: 15px;
+  color: var(--login-title);
+}
+
+.auth-form :deep(.el-input__inner::placeholder) {
+  color: var(--login-muted);
+}
+
+.auth-form :deep(.el-input__prefix),
+.auth-form :deep(.el-input__suffix) {
+  color: var(--login-muted);
+}
+
+.auth-form__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: -2px 0 14px;
+}
+
+.auth-form__hint {
+  font-size: 13px;
+  color: var(--login-muted);
+}
+
+.auth-link {
+  padding: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--login-primary);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.auth-submit {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 52px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(
+    135deg,
+    var(--login-primary) 0%,
+    var(--login-primary-strong) 100%
+  );
+  border: 0;
+  border-radius: 16px;
+  box-shadow: 0 18px 36px rgba(35, 100, 255, 0.26);
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.auth-submit:hover {
+  transform: translateY(-1px);
+}
+
+.auth-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+@media (width <= 1180px) {
+  .saas-login {
+    overflow-y: auto;
   }
 
-  .left-section {
-    width: 100%;
+  .saas-login__main {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: calc(100vh - 90px);
+    padding-top: 24px;
+  }
+
+  .hero-panel {
+    max-width: none;
+  }
+
+  .auth-card {
+    max-width: none;
+    margin-left: 0;
+  }
+}
+
+@media (width <= 860px) {
+  .saas-login__header {
+    padding: 22px 20px 0;
+  }
+
+  .saas-login__main {
+    gap: 24px;
+    padding: 22px 20px 28px;
+  }
+
+  .hero-panel {
+    padding: 28px 22px;
+  }
+
+  .hero-title {
+    font-size: 34px;
+  }
+
+  .auth-card {
+    padding: 24px 22px 22px;
+  }
+
+  .auth-card__title {
+    font-size: 26px;
   }
 }
 
 @media (width <= 640px) {
-  .header-bar {
-    padding: 16px 20px;
+  .hero-panel {
+    display: none;
   }
 
-  .form-container {
-    padding: 20px;
+  .saas-login__main {
+    align-items: stretch;
   }
 
-  .form-card {
-    padding: 32px 24px;
+  .auth-card {
+    max-width: none;
   }
 
-  .form-title {
-    font-size: 24px;
-  }
-}
-
-.login-wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  display: flex;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* 左侧区域 - 包含 header、form、footer */
-.left-section {
-  position: relative;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  height: 100vh;
-  overflow-y: auto;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-}
-
-/* 背景装饰 */
-.background-pattern {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.circle {
-  position: absolute;
-  background: white;
-  border-radius: 50%;
-  opacity: 0.1;
-}
-
-.circle-1 {
-  top: -200px;
-  left: -200px;
-  width: 400px;
-  height: 400px;
-}
-
-.circle-2 {
-  right: -300px;
-  bottom: -300px;
-  width: 600px;
-  height: 600px;
-}
-
-.circle-3 {
-  top: 50%;
-  left: 50%;
-  width: 300px;
-  height: 300px;
-}
-
-/* 顶部栏 */
-.header-bar {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 40px;
-  background: transparent;
-}
-
-.logo-section {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-
-  img {
-    display: inline-block;
-    height: 32px;
-  }
-}
-
-.logo {
-  width: 36px;
-  height: 36px;
-}
-
-.logo-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #333;
-}
-
-/* 表单容器 */
-.form-container {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-}
-
-/* 表单区域 */
-.form-section {
-  width: 100%;
-  max-width: 420px;
-}
-
-.form-card {
-  padding: 48px 48px 30px 48px;
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgb(0 0 0 / 8%);
-}
-
-.form-header {
-  margin-bottom: 36px;
-  text-align: center;
-}
-
-.form-title {
-  margin-bottom: 8px;
-  font-size: 28px;
-  font-weight: 700;
-  color: #1a1a1a;
-}
-
-.form-subtitle {
-  font-size: 14px;
-  color: #666;
-}
-
-.auth-form {
-  :deep(.el-form-item) {
-    margin-bottom: 20px;
-  }
-
-  :deep(.el-input__wrapper) {
-    padding: 4px 16px;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    box-shadow: none !important;
-    transition: all 0.3s;
-
-    &:hover {
-      border-color: #c0c0c0;
-    }
-
-    &.is-focus {
-      border-color: #3478f6;
-    }
-  }
-
-  :deep(.el-input__inner) {
-    height: 40px;
-    font-size: 15px;
-
-    &::placeholder {
-      color: #999;
-    }
-  }
-
-  :deep(.el-input__prefix) {
-    color: #999;
-  }
-}
-
-.form-actions {
-  margin-bottom: 20px;
-  text-align: right;
-
-  .el-button {
-    font-size: 14px;
-  }
-}
-
-.submit-btn {
-  width: 100%;
-  height: 48px;
-  margin-bottom: 24px;
-  font-size: 16px;
-  font-weight: 600;
-  background: linear-gradient(135deg, #3478f6 0%, #3478f6 100%);
-  border: none;
-  border-radius: 10px;
-  transition: all 0.3s;
-
-  &:hover {
-    box-shadow: 0 8px 20px rgba(52, 120, 246, 0.3);
-    transform: translateY(-2px);
-  }
-}
-
-.switch-page {
-  font-size: 14px;
-  color: #666;
-  text-align: center;
-
-  .el-button {
-    font-size: 14px;
-  }
-}
-
-/* 右侧展示区域 - 固定600px宽度，独立区域 */
-.display-section {
-  position: relative;
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  width: 600px;
-  height: 100vh;
-  padding: 40px;
-  overflow-y: auto;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-}
-
-.display-content {
-  width: 100%;
-  max-width: 440px;
-  text-align: center;
-}
-
-.illustration-wrapper {
-  margin-bottom: 40px;
-}
-
-.illustration {
-  width: 100%;
-  max-width: 400px;
-  height: auto;
-}
-
-.display-description {
-  margin-bottom: 40px;
-  font-size: 16px;
-  line-height: 1.6;
-  color: #666;
-}
-
-/* 底部 - 只在左侧显示 */
-.footer {
-  position: relative;
-  z-index: 10;
-  padding: 20px;
-  text-align: center;
-  background: transparent;
-
-  p {
-    margin: 0;
-    font-size: 14px;
-    color: #666;
-  }
-}
-
-/* 图形验证码样式 */
-.image-verify-container {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  align-items: center;
-}
-
-.verify-image-wrapper {
-  display: flex;
-  justify-content: center;
-  padding: 12px;
-  background: #f5f7fa;
-  border-radius: 8px;
-}
-
-.verify-tip {
-  margin: 0;
-  font-size: 12px;
-  color: #999;
-  text-align: center;
-}
-
-/* 深色模式适配 */
-:global(.dark) {
-  .left-section {
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-  }
-
-  .logo-title {
-    color: #f0f0f0;
-  }
-
-  .form-card {
-    background: #1e1e1e;
-    box-shadow: 0 10px 40px rgb(0 0 0 / 30%);
-  }
-
-  .form-title {
-    color: #f0f0f0;
-  }
-
-  .form-subtitle {
-    color: #999;
-  }
-
-  .auth-form {
-    :deep(.el-input__wrapper) {
-      background: #2a2a2a;
-      border-color: #3a3a3a;
-
-      &:hover {
-        border-color: #4a4a4a;
-      }
-    }
-
-    :deep(.el-input__inner) {
-      color: #f0f0f0;
-    }
-  }
-
-  .display-section {
-    background: linear-gradient(135deg, #2a1a1a 0%, #3a2020 100%);
-  }
-
-  .display-description {
-    color: #999;
-  }
-
-  .footer p {
-    color: #999;
-  }
-
-  .verify-image-wrapper {
-    background: #2a2a2a;
+  .brand__name {
+    font-size: 20px;
   }
 }
 </style>

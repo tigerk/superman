@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-import { ref, reactive, onBeforeUnmount, computed, watch } from "vue";
+import { computed, onBeforeUnmount, reactive, ref, watch } from "vue";
 import Motion from "../utils/motion";
 import { message } from "@/utils/message";
-import { updateRules } from "../utils/rule";
+import { updateRules, REGEXP_PWD } from "../utils/rule";
 import type { FormInstance } from "element-plus";
 import { useVerifyCode } from "../utils/verifyCode";
-import { $t, transformI18n } from "@/plugins/i18n";
 import { baseUrlApi } from "@/api/utils";
 import Lock from "~icons/ri/lock-fill";
 import Phone from "~icons/ri/phone-fill";
 import Shield from "~icons/ri/shield-keyhole-line";
+import ArrowLeft from "~icons/ri/arrow-left-line";
+import ArrowRight from "~icons/ri/arrow-right-line";
+import CheckCircle from "~icons/ri/checkbox-circle-fill";
 import { loginUpdate, sendSmsCode } from "@/api/platform/login";
 
-const { t } = useI18n();
 const emit = defineEmits<{
   (e: "switchPage", page: string): void;
 }>();
@@ -24,7 +24,6 @@ const imageVerifyCode = ref("");
 const captchaImageUrl = ref("");
 const { isDisabled, text } = useVerifyCode();
 
-// 忘记密码表单
 const forgotForm = reactive({
   phone: "",
   verifyCode: "",
@@ -33,6 +32,21 @@ const forgotForm = reactive({
 });
 
 const hasValidPhone = computed(() => /^1\d{10}$/.test(forgotForm.phone));
+
+const passwordStrength = computed(() => {
+  const pwd = forgotForm.password;
+  if (!pwd) return { text: "未设置", cls: "" };
+  let score = 0;
+  if (pwd.length >= 8) score += 1;
+  if (/[a-z]/.test(pwd)) score += 1;
+  if (/[A-Z]/.test(pwd)) score += 1;
+  if (/\d/.test(pwd)) score += 1;
+  if (/[^a-zA-Z0-9]/.test(pwd)) score += 1;
+
+  if (score <= 2) return { text: "强度较弱", cls: "weak" };
+  if (score <= 4) return { text: "强度中等", cls: "medium" };
+  return { text: "强度较高", cls: "strong" };
+});
 
 const refreshCaptcha = () => {
   if (!hasValidPhone.value) {
@@ -44,28 +58,24 @@ const refreshCaptcha = () => {
 
 watch(
   () => forgotForm.phone,
-  (phone, prevPhone) => {
-    if (phone === prevPhone) return;
+  phone => {
     forgotForm.verifyCode = "";
     imageVerifyCode.value = "";
     if (phone.length === 11 && hasValidPhone.value) {
       refreshCaptcha();
-      return;
+    } else {
+      captchaImageUrl.value = "";
     }
-    captchaImageUrl.value = "";
   }
 );
 
-// 确认密码验证规则
 const repeatPasswordRule = [
   {
-    validator: (rule, value, callback) => {
+    validator: (_, value, callback) => {
       if (value === "") {
-        callback(new Error(transformI18n($t("login.purePassWordSureReg"))));
+        callback(new Error("请再次输入新密码"));
       } else if (forgotForm.password !== value) {
-        callback(
-          new Error(transformI18n($t("login.purePassWordDifferentReg")))
-        );
+        callback(new Error("两次输入密码不一致"));
       } else {
         callback();
       }
@@ -74,64 +84,58 @@ const repeatPasswordRule = [
   }
 ];
 
-// 重置密码处理
 const onUpdate = async (formEl: FormInstance | undefined) => {
-  loading.value = true;
   if (!formEl) return;
-  await formEl.validate(valid => {
-    if (valid) {
-      // 模拟重置密码请求
-      loginUpdate({
-        phone: forgotForm.phone,
-        verifyCode: forgotForm.verifyCode,
-        password: forgotForm.password
-      }).then(resp => {
-        message(transformI18n($t("login.purePassWordUpdateReg")), {
-          type: "success"
-        });
-        emit("switchPage", "login");
-        loading.value = false;
-      });
+  loading.value = true;
+  try {
+    const valid = await formEl.validate().catch(() => false);
+    if (!valid) return;
+    const res = await loginUpdate({
+      phone: forgotForm.phone,
+      verifyCode: forgotForm.verifyCode,
+      password: forgotForm.password
+    });
+    if (res.code === 0) {
+      message("密码已更新，请重新登录", { type: "success" });
+      emit("switchPage", "login");
     } else {
-      loading.value = false;
+      message(res.message, { type: "error" });
     }
-  });
+  } finally {
+    loading.value = false;
+  }
 };
 
-const sendVerificationCode = async (
-  formEl: FormInstance | undefined,
-  field: string
-) => {
-  if (!formEl) return;
-  await formEl.validateField(field, async valid => {
-    if (!valid) {
-      return;
-    }
-    if (!imageVerifyCode.value) {
-      message("请输入图形验证码", { type: "warning" });
-      if (!captchaImageUrl.value) refreshCaptcha();
-      return;
-    }
+const sendVerificationCode = async () => {
+  if (!ruleFormRef.value) return;
+  try {
+    await ruleFormRef.value.validateField("phone");
+  } catch {
+    return;
+  }
+  if (!imageVerifyCode.value) {
+    message("请输入图形验证码", { type: "warning" });
+    refreshCaptcha();
+    return;
+  }
 
-    sendSmsCode({
+  try {
+    const res = await sendSmsCode({
       phone: forgotForm.phone,
       captcha: imageVerifyCode.value
-    })
-      .then(res => {
-        if (res.code === 0) {
-          useVerifyCode().start(ruleFormRef.value, "phone", 60);
-          message("验证码已发送", { type: "success" });
-        } else {
-          message(res.message, { type: "error" });
-        }
-      })
-      .catch(() => {
-        refreshCaptcha();
-      });
-  });
+    });
+    if (res.code === 0) {
+      useVerifyCode().start(ruleFormRef.value, "phone", 60);
+      message("验证码已发送", { type: "success" });
+    } else {
+      message(res.message, { type: "error" });
+      refreshCaptcha();
+    }
+  } catch {
+    refreshCaptcha();
+  }
 };
 
-// 组件销毁时清理定时器
 onBeforeUnmount(() => {
   useVerifyCode().end();
 });
@@ -139,358 +143,494 @@ onBeforeUnmount(() => {
 
 <template>
   <Motion key="forgot">
-    <div class="form-header">
-      <h1 class="form-title">重置密码</h1>
-      <p class="form-subtitle">输入您的手机号重置密码</p>
-    </div>
+    <div class="reset-shell">
+      <div class="reset-header">
+        <div class="reset-header__eyebrow">密码找回</div>
+        <h2 class="reset-header__title">重置平台管理员登录密码</h2>
+        <p class="reset-header__desc">
+          验证平台管理员绑定手机号后，可重新设置租房 SaaS 平台登录密码。
+        </p>
+      </div>
 
-    <el-form
-      ref="ruleFormRef"
-      :model="forgotForm"
-      :rules="updateRules"
-      class="auth-form"
-    >
-      <el-form-item prop="phone">
-        <el-input
-          v-model="forgotForm.phone"
-          size="large"
-          clearable
-          placeholder="手机号"
-        >
-          <template #prefix>
-            <el-icon>
-              <Phone />
-            </el-icon>
-          </template>
-        </el-input>
-      </el-form-item>
+      <div class="reset-steps">
+        <div class="reset-step is-active">
+          <span>01</span>
+          <div>
+            <strong>验证身份</strong>
+            <small>手机号 + 图形验证码</small>
+          </div>
+        </div>
+        <div class="reset-step">
+          <span>02</span>
+          <div>
+            <strong>设置新密码</strong>
+            <small>短信校验后完成重置</small>
+          </div>
+        </div>
+      </div>
 
-      <el-form-item v-if="hasValidPhone" class="inline-captcha-item">
-        <div class="verify-code-wrapper captcha-wrapper">
-          <el-input
-            v-model="imageVerifyCode"
-            size="large"
-            clearable
-            maxlength="4"
-            placeholder="图形验证码"
-          >
-            <template #prefix>
-              <el-icon>
-                <Shield />
-              </el-icon>
+      <el-form
+        ref="ruleFormRef"
+        :model="forgotForm"
+        :rules="updateRules"
+        label-position="top"
+        class="reset-form"
+      >
+        <div class="reset-panel">
+          <div class="reset-panel__title">身份确认</div>
+          <div class="reset-panel__desc">
+            输入平台管理员已绑定的手机号，系统会发送短信验证码完成身份校验。
+          </div>
+
+          <el-form-item prop="phone">
+            <template #label>
+              <span class="field-label">手机号</span>
             </template>
-          </el-input>
-          <button type="button" class="captcha-box" @click="refreshCaptcha">
-            <img
-              v-if="captchaImageUrl"
-              :src="captchaImageUrl"
-              alt="图形验证码"
-              class="captcha-image"
-            />
-            <span v-else>加载验证码</span>
+            <el-input
+              v-model="forgotForm.phone"
+              size="large"
+              clearable
+              maxlength="11"
+              placeholder="请输入管理员绑定手机号"
+            >
+              <template #prefix>
+                <el-icon><Phone /></el-icon>
+              </template>
+            </el-input>
+          </el-form-item>
+
+          <el-form-item v-if="hasValidPhone" class="captcha-item">
+            <template #label>
+              <span class="field-label">图形验证码</span>
+            </template>
+            <div class="captcha-row">
+              <el-input
+                v-model="imageVerifyCode"
+                size="large"
+                clearable
+                maxlength="4"
+                placeholder="请输入图形验证码"
+              >
+                <template #prefix>
+                  <el-icon><Shield /></el-icon>
+                </template>
+              </el-input>
+              <button type="button" class="captcha-box" @click="refreshCaptcha">
+                <img
+                  v-if="captchaImageUrl"
+                  :src="captchaImageUrl"
+                  alt="图形验证码"
+                  class="captcha-image"
+                />
+                <span v-else>点击加载</span>
+              </button>
+            </div>
+            <div class="captcha-tip">
+              手机号输入完整后自动显示，点击图片可刷新
+            </div>
+          </el-form-item>
+
+          <el-form-item prop="verifyCode">
+            <template #label>
+              <span class="field-label">短信验证码</span>
+            </template>
+            <div class="sms-row">
+              <el-input
+                v-model="forgotForm.verifyCode"
+                size="large"
+                clearable
+                maxlength="4"
+                placeholder="请输入短信验证码"
+              >
+                <template #prefix>
+                  <el-icon><Shield /></el-icon>
+                </template>
+              </el-input>
+              <el-button
+                class="sms-btn"
+                :disabled="isDisabled"
+                @click="sendVerificationCode"
+              >
+                {{ text.length > 0 ? `${text}秒后重发` : "获取验证码" }}
+              </el-button>
+            </div>
+          </el-form-item>
+        </div>
+
+        <div class="reset-panel">
+          <div class="reset-panel__title">设置新密码</div>
+          <div class="reset-panel__desc">
+            新密码建议包含字母、数字和符号中的至少两种组合。
+          </div>
+
+          <div class="two-col">
+            <el-form-item prop="password">
+              <template #label>
+                <span class="field-label">新密码</span>
+              </template>
+              <el-input
+                v-model="forgotForm.password"
+                size="large"
+                type="password"
+                placeholder="请输入新密码"
+              >
+                <template #prefix>
+                  <el-icon><Lock /></el-icon>
+                </template>
+              </el-input>
+              <div class="password-strength" :class="passwordStrength.cls">
+                {{ passwordStrength.text }}
+              </div>
+            </el-form-item>
+
+            <el-form-item :rules="repeatPasswordRule" prop="confirmPassword">
+              <template #label>
+                <span class="field-label">确认密码</span>
+              </template>
+              <el-input
+                v-model="forgotForm.confirmPassword"
+                size="large"
+                type="password"
+                placeholder="请再次输入新密码"
+              >
+                <template #prefix>
+                  <el-icon><Lock /></el-icon>
+                </template>
+              </el-input>
+              <div
+                v-if="
+                  forgotForm.confirmPassword &&
+                  forgotForm.password === forgotForm.confirmPassword
+                "
+                class="password-match"
+              >
+                <el-icon><CheckCircle /></el-icon>
+                两次输入一致
+              </div>
+            </el-form-item>
+          </div>
+        </div>
+
+        <div class="reset-actions">
+          <button
+            type="button"
+            class="reset-back"
+            @click="emit('switchPage', 'login')"
+          >
+            <el-icon><ArrowLeft /></el-icon>
+            返回登录
+          </button>
+          <button
+            type="button"
+            class="reset-submit"
+            :disabled="loading || !REGEXP_PWD.test(forgotForm.password)"
+            @click="onUpdate(ruleFormRef)"
+          >
+            <span>{{ loading ? "提交中..." : "确认重置密码" }}</span>
+            <el-icon><ArrowRight /></el-icon>
           </button>
         </div>
-        <p class="captcha-tip">手机号输入完成后自动显示，点击图片可刷新</p>
-      </el-form-item>
-
-      <el-form-item prop="verifyCode">
-        <div class="verify-code-wrapper">
-          <el-input
-            v-model="forgotForm.verifyCode"
-            size="large"
-            clearable
-            placeholder="验证码"
-          >
-            <template #prefix>
-              <el-icon>
-                <Shield />
-              </el-icon>
-            </template>
-          </el-input>
-          <el-button
-            class="verify-btn"
-            :disabled="isDisabled"
-            @click="sendVerificationCode(ruleFormRef, 'phone')"
-          >
-            {{ text.length > 0 ? text + t("login.pureInfo") : "获取验证码" }}
-          </el-button>
-        </div>
-      </el-form-item>
-
-      <el-form-item prop="password">
-        <el-input
-          v-model="forgotForm.password"
-          size="large"
-          type="password"
-          placeholder="新密码"
-        >
-          <template #prefix>
-            <el-icon>
-              <Lock />
-            </el-icon>
-          </template>
-        </el-input>
-      </el-form-item>
-
-      <el-form-item :rules="repeatPasswordRule" prop="confirmPassword">
-        <el-input
-          v-model="forgotForm.confirmPassword"
-          size="large"
-          type="password"
-          placeholder="确认新密码"
-        >
-          <template #prefix>
-            <el-icon>
-              <Lock />
-            </el-icon>
-          </template>
-        </el-input>
-      </el-form-item>
-
-      <el-button
-        type="primary"
-        size="large"
-        class="submit-btn"
-        :loading="loading"
-        @click="onUpdate(ruleFormRef)"
-        >重置密码</el-button
-      >
-
-      <div class="switch-page">
-        <el-space>
-          <span>想起密码了？</span>
-          <el-button link type="primary" @click="emit('switchPage', 'login')"
-            >返回登录</el-button
-          >
-        </el-space>
-      </div>
-    </el-form>
+      </el-form>
+    </div>
   </Motion>
 </template>
 
 <style scoped lang="scss">
-.form-header {
-  margin-bottom: 36px;
-  text-align: center;
+.reset-shell {
+  color: var(--login-title, #10233d);
 }
 
-.form-title {
+.reset-header {
+  margin-bottom: 14px;
+}
+
+.reset-header__eyebrow {
   margin-bottom: 8px;
-  font-size: 28px;
+  font-size: 12px;
   font-weight: 700;
-  color: #1a1a1a;
-  transition: color 0.3s ease;
+  color: var(--login-primary, #2364ff);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
-.form-subtitle {
-  font-size: 14px;
-  color: #666;
-  transition: color 0.3s ease;
+.reset-header__title {
+  margin: 0 0 6px;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.24;
+  color: var(--login-title, #10233d);
 }
 
-.auth-form {
-  :deep(.el-form-item) {
-    margin-bottom: 20px;
-  }
-
-  :deep(.el-input__wrapper) {
-    padding: 4px 16px;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    box-shadow: none !important;
-    transition: all 0.3s;
-
-    &:hover {
-      border-color: #c0c0c0;
-    }
-
-    &.is-focus {
-      border-color: #3478f6;
-    }
-  }
-
-  :deep(.el-input__inner) {
-    height: 40px;
-    font-size: 15px;
-
-    &::placeholder {
-      color: #999;
-    }
-  }
-
-  :deep(.el-input__prefix) {
-    color: #999;
-  }
+.reset-header__desc {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--login-text, #47607b);
 }
 
-.verify-code-wrapper {
+.reset-steps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.reset-step {
   display: flex;
-  gap: 12px;
-
-  .verify-btn {
-    flex-shrink: 0;
-    height: 48px;
-    padding: 0 20px;
-    border-radius: 10px;
-  }
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.36);
+  border: 1px solid var(--login-border, rgba(134, 156, 184, 0.18));
+  border-radius: 16px;
 }
 
-.captcha-wrapper {
-  align-items: stretch;
+.reset-step span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--login-muted, #6f8197);
+  background: rgba(255, 255, 255, 0.52);
+  border-radius: 999px;
 }
 
-.inline-captcha-item {
-  margin-top: -6px;
+.reset-step strong {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 13px;
+  color: var(--login-title, #10233d);
+}
+
+.reset-step small {
+  font-size: 11px;
+  color: var(--login-muted, #6f8197);
+}
+
+.reset-step.is-active {
+  border-color: rgba(35, 100, 255, 0.18);
+  box-shadow: 0 8px 24px rgba(35, 100, 255, 0.08);
+}
+
+.reset-step.is-active span {
+  color: #fff;
+  background: linear-gradient(
+    135deg,
+    var(--login-primary, #2364ff) 0%,
+    var(--login-primary-strong, #0b4ddd) 100%
+  );
+}
+
+.reset-form :deep(.el-form-item) {
+  margin-bottom: 14px;
+}
+
+.reset-form :deep(.el-form-item__label) {
+  padding-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--login-title, #10233d);
+}
+
+.reset-form :deep(.el-input__wrapper) {
+  min-height: 50px;
+  padding: 0 14px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--login-border, rgba(134, 156, 184, 0.18));
+  border-radius: 18px;
+  box-shadow: none !important;
+}
+
+:global(.saas-login.dark) .reset-form :deep(.el-input__wrapper) {
+  background: rgba(7, 16, 28, 0.88);
+}
+
+.reset-form :deep(.el-input__wrapper.is-focus) {
+  border-color: var(--login-primary, #2364ff);
+  box-shadow: 0 0 0 3px rgba(35, 100, 255, 0.14) !important;
+}
+
+.reset-form :deep(.el-input__inner) {
+  height: 42px;
+  color: var(--login-title, #10233d);
+}
+
+.reset-form :deep(.el-input__inner::placeholder) {
+  color: var(--login-muted, #6f8197);
+}
+
+.reset-form :deep(.el-input__prefix) {
+  color: var(--login-muted, #6f8197);
+}
+
+.reset-panel {
+  padding: 14px;
+  margin-bottom: 12px;
+  background: rgba(255, 255, 255, 0.26);
+  border: 1px solid var(--login-border, rgba(134, 156, 184, 0.18));
+  border-radius: 20px;
+}
+
+.reset-panel__title {
+  margin-bottom: 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--login-title, #10233d);
+}
+
+.reset-panel__desc {
+  margin-bottom: 12px;
+  font-size: 11px;
+  line-height: 1.55;
+  color: var(--login-text, #47607b);
+}
+
+.field-label {
+  color: var(--login-title, #10233d);
+}
+
+.captcha-row,
+.sms-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 140px;
+  gap: 10px;
 }
 
 .captcha-box {
-  flex-shrink: 0;
-  width: 140px;
-  height: 48px;
-  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
   overflow: hidden;
-  color: #666;
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
-  transition: all 0.3s;
+  color: var(--login-muted, #6f8197);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--login-border, rgba(134, 156, 184, 0.18));
+  border-radius: 18px;
+  cursor: pointer;
 }
 
-.captcha-box:hover {
-  border-color: #c0c0c0;
+:global(.saas-login.dark) .captcha-box {
+  background: rgba(7, 16, 28, 0.88);
 }
 
 .captcha-image {
   display: block;
   width: 100%;
-  height: 100%;
+  height: 50px;
   object-fit: cover;
 }
 
-.captcha-tip {
-  margin: 8px 0 0;
-  font-size: 12px;
+.captcha-tip,
+.password-strength,
+.password-match {
+  margin-top: 6px;
+  font-size: 11px;
   line-height: 1.5;
-  color: #666;
 }
 
-.submit-btn {
-  width: 100%;
-  height: 48px;
-  margin-bottom: 24px;
-  font-size: 16px;
-  font-weight: 600;
-  background: linear-gradient(135deg, #3478f6 0%, #3478f6 100%);
-  border: none;
-  border-radius: 10px;
-  transition: all 0.3s;
-
-  &:hover {
-    box-shadow: 0 8px 20px rgba(52, 120, 246, 0.3);
-    transform: translateY(-2px);
-  }
+.captcha-tip {
+  color: var(--login-muted, #6f8197);
 }
 
-.switch-page {
-  font-size: 14px;
-  color: #666;
-  text-align: center;
-  transition: color 0.3s ease;
-
-  .el-button {
-    font-size: 14px;
-  }
+.password-strength {
+  color: var(--login-muted, #6f8197);
 }
 
-/* Dark mode support - using :global to target parent dark class */
-.login-wrapper.dark {
-  .form-title {
-    color: #f0f0f0 !important;
+.password-strength.weak {
+  color: #ef4444;
+}
+
+.password-strength.medium {
+  color: #f59e0b;
+}
+
+.password-strength.strong {
+  color: #22c55e;
+}
+
+.password-match {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  color: #22c55e;
+}
+
+.sms-btn {
+  min-height: 50px;
+  margin-left: 0;
+  border-radius: 16px;
+}
+
+.two-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.reset-actions {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+}
+
+.reset-back,
+.reset-submit {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+.reset-back {
+  min-width: 132px;
+  color: var(--login-title, #10233d);
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid var(--login-border, rgba(134, 156, 184, 0.18));
+}
+
+.reset-submit {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(
+    135deg,
+    var(--login-primary, #2364ff) 0%,
+    var(--login-primary-strong, #0b4ddd) 100%
+  );
+  border: 0;
+  box-shadow: 0 18px 36px rgba(35, 100, 255, 0.24);
+}
+
+.reset-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+@media (width <= 860px) {
+  .two-col,
+  .captcha-row,
+  .sms-row,
+  .reset-steps {
+    grid-template-columns: 1fr;
   }
 
-  .form-subtitle {
-    color: #999;
+  .reset-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
   }
 
-  .auth-form {
-    :deep(.el-form-item__label) {
-      color: #f0f0f0;
-    }
-
-    :deep(.el-input__wrapper) {
-      background: #2a2a2a;
-      border-color: #3a3a3a;
-
-      &:hover {
-        border-color: #4a4a4a;
-      }
-
-      &.is-focus {
-        border-color: #409eff;
-      }
-    }
-
-    :deep(.el-input__inner) {
-      color: #f0f0f0;
-
-      &::placeholder {
-        color: #666;
-      }
-    }
-
-    :deep(.el-input__prefix),
-    :deep(.el-input__suffix) {
-      color: #999;
-    }
-  }
-
-  .verify-code-wrapper {
-    .verify-btn {
-      background: #2a2a2a;
-      border-color: #3a3a3a;
-      color: #f0f0f0;
-
-      &:hover:not(:disabled) {
-        background: #333;
-        border-color: #4a4a4a;
-      }
-
-      &:disabled {
-        background: #1e1e1e;
-        border-color: #2a2a2a;
-        color: #666;
-      }
-    }
-  }
-
-  .captcha-box {
-    color: #999;
-    background: #2a2a2a;
-    border-color: #3a3a3a;
-
-    &:hover {
-      border-color: #4a4a4a;
-    }
-  }
-
-  .captcha-tip {
-    color: #999;
-  }
-
-  .switch-page {
-    color: #999;
-
-    span {
-      color: #999;
-    }
-
-    .el-button {
-      color: #409eff;
-
-      &:hover {
-        color: #66b1ff;
-      }
-    }
+  .reset-back,
+  .reset-submit {
+    width: 100%;
   }
 }
 </style>
