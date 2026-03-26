@@ -146,29 +146,10 @@ onBeforeUnmount(() => {
     <div class="reset-shell">
       <div class="reset-header">
         <div class="reset-header__eyebrow">密码找回</div>
-        <h2 class="reset-header__title">重置平台管理员登录密码</h2>
         <p class="reset-header__desc">
           验证平台管理员绑定手机号后，可重新设置租房 SaaS 平台登录密码。
         </p>
       </div>
-
-      <div class="reset-steps">
-        <div class="reset-step is-active">
-          <span>01</span>
-          <div>
-            <strong>验证身份</strong>
-            <small>手机号 + 图形验证码</small>
-          </div>
-        </div>
-        <div class="reset-step">
-          <span>02</span>
-          <div>
-            <strong>设置新密码</strong>
-            <small>短信校验后完成重置</small>
-          </div>
-        </div>
-      </div>
-
       <el-form
         ref="ruleFormRef"
         :model="forgotForm"
@@ -341,12 +322,12 @@ onBeforeUnmount(() => {
 }
 
 .reset-header {
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .reset-header__eyebrow {
-  margin-bottom: 8px;
-  font-size: 12px;
+  margin-bottom: 6px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--login-primary, #2364ff);
   letter-spacing: 0.14em;
@@ -355,16 +336,16 @@ onBeforeUnmount(() => {
 
 .reset-header__title {
   margin: 0 0 6px;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
-  line-height: 1.24;
+  line-height: 1.18;
   color: var(--login-title, #10233d);
 }
 
 .reset-header__desc {
   margin: 0;
-  font-size: 12px;
-  line-height: 1.6;
+  font-size: 10px;
+  line-height: 1.4;
   color: var(--login-text, #47607b);
 }
 
@@ -385,6 +366,11 @@ onBeforeUnmount(() => {
   border-radius: 16px;
 }
 
+:global(.saas-login.dark) .reset-step {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
 .reset-step span {
   display: inline-flex;
   align-items: center;
@@ -396,6 +382,10 @@ onBeforeUnmount(() => {
   color: var(--login-muted, #6f8197);
   background: rgba(255, 255, 255, 0.52);
   border-radius: 999px;
+}
+
+:global(.saas-login.dark) .reset-step span {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .reset-step strong {
@@ -425,27 +415,27 @@ onBeforeUnmount(() => {
 }
 
 .reset-form :deep(.el-form-item) {
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .reset-form :deep(.el-form-item__label) {
-  padding-bottom: 8px;
-  font-size: 13px;
+  padding-bottom: 5px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--login-title, #10233d);
 }
 
 .reset-form :deep(.el-input__wrapper) {
-  min-height: 50px;
-  padding: 0 14px;
-  background: rgba(255, 255, 255, 0.72);
+  min-height: 46px;
+  padding: 0 12px;
   border: 1px solid var(--login-border, rgba(134, 156, 184, 0.18));
   border-radius: 18px;
   box-shadow: none !important;
 }
 
 :global(.saas-login.dark) .reset-form :deep(.el-input__wrapper) {
-  background: rgba(7, 16, 28, 0.88);
+  background: rgba(9, 16, 29, 0.92);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .reset-form :deep(.el-input__wrapper.is-focus) {
@@ -454,7 +444,7 @@ onBeforeUnmount(() => {
 }
 
 .reset-form :deep(.el-input__inner) {
-  height: 42px;
+  height: 38px;
   color: var(--login-title, #10233d);
 }
 
@@ -467,24 +457,28 @@ onBeforeUnmount(() => {
 }
 
 .reset-panel {
-  padding: 14px;
-  margin-bottom: 12px;
-  background: rgba(255, 255, 255, 0.26);
+  padding: 10px 10px 0;
+  margin-bottom: 8px;
   border: 1px solid var(--login-border, rgba(134, 156, 184, 0.18));
   border-radius: 20px;
 }
 
+:global(.saas-login.dark) .reset-panel {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
 .reset-panel__title {
-  margin-bottom: 4px;
-  font-size: 15px;
+  margin-bottom: 2px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--login-title, #10233d);
 }
 
 .reset-panel__desc {
-  margin-bottom: 12px;
-  font-size: 11px;
-  line-height: 1.55;
+  margin-bottom: 8px;
+  font-size: 10px;
+  line-height: 1.35;
   color: var(--login-text, #47607b);
 }
 
@@ -495,15 +489,15 @@ onBeforeUnmount(() => {
 .captcha-row,
 .sms-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 140px;
-  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) 132px;
+  gap: 8px;
 }
 
 .captcha-box {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 50px;
+  min-height: 46px;
   overflow: hidden;
   color: var(--login-muted, #6f8197);
   background: rgba(255, 255, 255, 0.72);
@@ -513,22 +507,24 @@ onBeforeUnmount(() => {
 }
 
 :global(.saas-login.dark) .captcha-box {
-  background: rgba(7, 16, 28, 0.88);
+  color: #c7d3e6;
+  background: rgba(9, 16, 29, 0.92);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .captcha-image {
   display: block;
   width: 100%;
-  height: 50px;
+  height: 44px;
   object-fit: cover;
 }
 
 .captcha-tip,
 .password-strength,
 .password-match {
-  margin-top: 6px;
-  font-size: 11px;
-  line-height: 1.5;
+  margin-top: 4px;
+  font-size: 10px;
+  line-height: 1.35;
 }
 
 .captcha-tip {
@@ -559,23 +555,36 @@ onBeforeUnmount(() => {
 }
 
 .sms-btn {
-  min-height: 50px;
+  min-height: 46px;
   margin-left: 0;
   border-radius: 16px;
+}
+
+:global(.saas-login.dark) .sms-btn {
+  color: #eef3fb;
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+:global(.saas-login.dark) .sms-btn:hover,
+:global(.saas-login.dark) .sms-btn:focus {
+  color: #fff;
+  background: rgba(92, 147, 255, 0.16);
+  border-color: rgba(92, 147, 255, 0.28);
 }
 
 .two-col {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 8px;
 }
 
 .reset-actions {
   display: flex;
-  gap: 14px;
+  gap: 10px;
   align-items: center;
   justify-content: space-between;
-  margin-top: 14px;
+  margin-top: 8px;
 }
 
 .reset-back,
@@ -584,21 +593,26 @@ onBeforeUnmount(() => {
   gap: 8px;
   align-items: center;
   justify-content: center;
-  height: 50px;
-  border-radius: 16px;
+  height: 46px;
+  border-radius: 14px;
   cursor: pointer;
 }
 
 .reset-back {
-  min-width: 132px;
+  min-width: 118px;
   color: var(--login-title, #10233d);
-  background: rgba(255, 255, 255, 0.4);
   border: 1px solid var(--login-border, rgba(134, 156, 184, 0.18));
+}
+
+:global(.saas-login.dark) .reset-back {
+  color: #eef3fb;
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .reset-submit {
   flex: 1;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: #fff;
   background: linear-gradient(
@@ -608,6 +622,12 @@ onBeforeUnmount(() => {
   );
   border: 0;
   box-shadow: 0 18px 36px rgba(35, 100, 255, 0.24);
+}
+
+:global(.saas-login.dark) .reset-submit {
+  color: #fff;
+  background: linear-gradient(135deg, #5c93ff 0%, #82a8ff 100%);
+  box-shadow: 0 18px 36px rgba(92, 147, 255, 0.24);
 }
 
 .reset-submit:disabled {

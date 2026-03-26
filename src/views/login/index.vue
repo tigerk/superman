@@ -84,9 +84,7 @@ const capabilityList = [
   }
 ];
 
-const currentCapabilityList = computed(() =>
-  currentPage.value === "forgot" ? capabilityList.slice(0, 2) : capabilityList
-);
+const currentCapabilityList = computed(() => capabilityList);
 
 const assuranceList = [
   "统一的平台后台入口",
@@ -94,7 +92,7 @@ const assuranceList = [
   "安全的账号找回与登录校验"
 ];
 
-const showAssurancePanel = computed(() => currentPage.value === "login");
+const showAssurancePanel = computed(() => true);
 
 const onLogin = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
@@ -173,12 +171,7 @@ useEventListener(document, "keydown", ({ code }) => {
     </header>
 
     <main class="saas-login__main">
-      <section
-        :class="[
-          'hero-panel',
-          { 'hero-panel--compact': currentPage === 'forgot' }
-        ]"
-      >
+      <section class="hero-panel">
         <Motion>
           <div class="hero-pill">
             <el-icon><ShieldCheck /></el-icon>
@@ -192,13 +185,6 @@ useEventListener(document, "keydown", ({ code }) => {
 
         <Motion :delay="80">
           <p class="hero-desc">{{ pageMeta.desc }}</p>
-        </Motion>
-
-        <Motion :delay="120">
-          <div class="hero-accent">
-            <span class="hero-accent__label">当前任务</span>
-            <strong>{{ pageMeta.accent }}</strong>
-          </div>
         </Motion>
 
         <Motion :delay="160">
@@ -236,7 +222,12 @@ useEventListener(document, "keydown", ({ code }) => {
       </section>
 
       <section class="auth-panel">
-        <div class="auth-card">
+        <div
+          :class="[
+            'auth-card',
+            { 'auth-card--forgot': currentPage === 'forgot' }
+          ]"
+        >
           <Motion v-if="currentPage === 'login'" key="login">
             <div class="auth-card__header">
               <div class="auth-card__eyebrow">平台账号登录</div>
@@ -248,6 +239,7 @@ useEventListener(document, "keydown", ({ code }) => {
               ref="ruleFormRef"
               :model="loginForm"
               :rules="loginRules"
+              label-position="top"
               class="auth-form"
             >
               <el-form-item prop="username">
@@ -342,7 +334,8 @@ useEventListener(document, "keydown", ({ code }) => {
   --login-shadow: 0 30px 80px rgba(24, 50, 84, 0.14);
   position: fixed;
   inset: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   background: var(--login-bg);
 }
 
@@ -452,13 +445,13 @@ useEventListener(document, "keydown", ({ code }) => {
   gap: 28px;
   align-items: start;
   width: min(1380px, 100%);
-  height: calc(100vh - 96px);
+  min-height: calc(100vh - 96px);
   padding: 24px 40px 32px;
   margin: 0 auto;
 }
 
 .hero-panel {
-  align-self: start;
+  align-self: center;
   max-width: 760px;
   padding: 34px 36px;
   background: var(--login-panel);
@@ -466,10 +459,6 @@ useEventListener(document, "keydown", ({ code }) => {
   border-radius: 28px;
   box-shadow: var(--login-shadow);
   backdrop-filter: blur(18px);
-}
-
-.hero-panel--compact {
-  padding-bottom: 26px;
 }
 
 .hero-pill {
@@ -544,6 +533,11 @@ useEventListener(document, "keydown", ({ code }) => {
   border-radius: 18px;
 }
 
+.saas-login.dark .capability-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
 .capability-card__icon {
   display: inline-flex;
   align-items: center;
@@ -554,6 +548,10 @@ useEventListener(document, "keydown", ({ code }) => {
   color: var(--login-primary);
   background: rgba(35, 100, 255, 0.1);
   border-radius: 16px;
+}
+
+.saas-login.dark .capability-card__icon {
+  background: rgba(92, 147, 255, 0.1);
 }
 
 .capability-card h3 {
@@ -575,6 +573,11 @@ useEventListener(document, "keydown", ({ code }) => {
   background: rgba(16, 35, 61, 0.05);
   border: 1px solid var(--login-border);
   border-radius: 20px;
+}
+
+.saas-login.dark .assurance-panel {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .assurance-panel__title {
@@ -599,12 +602,18 @@ useEventListener(document, "keydown", ({ code }) => {
   border-radius: 999px;
 }
 
+.saas-login.dark .assurance-chip {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
 .auth-panel {
   display: flex;
   flex-direction: column;
   gap: 12px;
   align-items: stretch;
-  align-self: start;
+  align-self: center;
+  justify-content: center;
   width: 100%;
 }
 
@@ -619,6 +628,10 @@ useEventListener(document, "keydown", ({ code }) => {
   border-radius: 26px;
   box-shadow: var(--login-shadow);
   backdrop-filter: blur(18px);
+}
+
+.auth-card--forgot {
+  padding: 22px 24px 18px;
 }
 
 .auth-card__header {
@@ -658,6 +671,12 @@ useEventListener(document, "keydown", ({ code }) => {
   font-size: 14px;
   font-weight: 600;
   color: var(--login-title);
+}
+
+.auth-form :deep(.el-form-item__content) {
+  display: flex;
+  width: 100%;
+  margin-left: 0 !important;
 }
 
 .field-label {
@@ -754,13 +773,8 @@ useEventListener(document, "keydown", ({ code }) => {
 }
 
 @media (width <= 1180px) {
-  .saas-login {
-    overflow-y: auto;
-  }
-
   .saas-login__main {
     grid-template-columns: 1fr;
-    height: auto;
     min-height: calc(100vh - 90px);
     padding-top: 24px;
   }
