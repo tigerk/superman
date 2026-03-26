@@ -117,9 +117,13 @@ const sendVerificationCode = async (
       phone: forgotForm.phone,
       captcha: imageVerifyCode.value
     })
-      .then(() => {
-        useVerifyCode().start(ruleFormRef.value, "phone", 60);
-        message("验证码已发送", { type: "success" });
+      .then(res => {
+        if (res.code === 0) {
+          useVerifyCode().start(ruleFormRef.value, "phone", 60);
+          message("验证码已发送", { type: "success" });
+        } else {
+          message(res.message, { type: "error" });
+        }
       })
       .catch(() => {
         refreshCaptcha();

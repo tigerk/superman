@@ -70,12 +70,6 @@ type ResultTable = {
   };
 };
 
-type Result = {
-  code: number;
-  message: string;
-  data?: any;
-};
-
 /** 登录 */
 export const getLogin = (data?: object) => {
   return http.request<UserResult>("post", baseUrlApi("login"), { data });
@@ -100,7 +94,7 @@ export const getMineLogs = (data?: object) => {
 
 export const sendSmsCode = (data?: object) => {
   return http.request<UserResult>("post", baseUrlApi("login/sms/send"), {
-    params: data
+    data
   });
 };
 

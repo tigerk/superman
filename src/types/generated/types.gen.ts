@@ -605,6 +605,17 @@ export type PlatformLoginDto = {
     password?: string;
 };
 
+export type PlatformLoginUpdateDto = {
+    phone: string;
+    verifyCode: string;
+    password?: string;
+};
+
+export type PlatformLoginSmsSendDto = {
+    phone: string;
+    captcha: string;
+};
+
 export type DictTemplateSyncVo = {
     toVer?: number;
     companyCount?: number;
@@ -1923,6 +1934,38 @@ export type GetLoginUserResponses = {
 
 export type GetLoginUserResponse = GetLoginUserResponses[keyof GetLoginUserResponses];
 
+export type UpdatePasswordData = {
+    body: PlatformLoginUpdateDto;
+    path?: never;
+    query?: never;
+    url: '/platform/login/update';
+};
+
+export type UpdatePasswordResponses = {
+    /**
+     * OK
+     */
+    200: ResponseResultBoolean;
+};
+
+export type UpdatePasswordResponse = UpdatePasswordResponses[keyof UpdatePasswordResponses];
+
+export type SendSmsCodeData = {
+    body: PlatformLoginSmsSendDto;
+    path?: never;
+    query?: never;
+    url: '/platform/login/sms/send';
+};
+
+export type SendSmsCodeResponses = {
+    /**
+     * OK
+     */
+    200: ResponseResultBoolean;
+};
+
+export type SendSmsCodeResponse = SendSmsCodeResponses[keyof SendSmsCodeResponses];
+
 export type GetCurrentUserData = {
     body?: never;
     path?: never;
@@ -2408,6 +2451,22 @@ export type ListSimple2Responses = {
 };
 
 export type ListSimple2Response = ListSimple2Responses[keyof ListSimple2Responses];
+
+export type CaptchaData = {
+    body?: never;
+    path: {
+        phone: string;
+    };
+    query?: never;
+    url: '/platform/captcha/{phone}';
+};
+
+export type CaptchaResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
 
 export type Index3Data = {
     body?: never;
