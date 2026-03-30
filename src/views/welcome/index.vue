@@ -9,13 +9,13 @@ defineOptions({
 
 const loading = ref(false);
 const overview = ref<PlatformOverviewVo>({
-  companyCount: 0,
+  companyCount: "",
   packageCompanyCounts: [],
   trialStats: {
-    totalCount: 0,
-    pendingCount: 0,
-    approvedCount: 0,
-    rejectedCount: 0
+    totalCount: "",
+    pendingCount: "",
+    approvedCount: "",
+    rejectedCount: ""
   }
 });
 
@@ -24,11 +24,6 @@ const companyCards = computed(() => [
     label: "公司总数",
     value: overview.value.companyCount || 0,
     accent: "var(--el-color-primary)"
-  },
-  {
-    label: "套餐种类",
-    value: overview.value.packageCompanyCounts?.length || 0,
-    accent: "var(--el-color-success)"
   }
 ]);
 
