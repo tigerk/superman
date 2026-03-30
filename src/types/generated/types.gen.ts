@@ -1353,6 +1353,9 @@ export type ResponseResultListAsyncRoutesVo = {
 
 export type PlatformOverviewVo = {
     companyCount?: string;
+    houseCount?: string;
+    roomCount?: string;
+    userCount?: string;
     packageCompanyCounts?: Array<PlatformPackageCompanyCountVo>;
     trialStats?: PlatformTrialStatsVo;
 };

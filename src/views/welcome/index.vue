@@ -10,6 +10,9 @@ defineOptions({
 const loading = ref(false);
 const overview = ref<PlatformOverviewVo>({
   companyCount: "",
+  houseCount: "",
+  roomCount: "",
+  userCount: "",
   packageCompanyCounts: [],
   trialStats: {
     totalCount: "",
@@ -20,6 +23,36 @@ const overview = ref<PlatformOverviewVo>({
 });
 
 const companyCount = computed(() => Number(overview.value.companyCount) || 0);
+const houseCount = computed(() => Number(overview.value.houseCount) || 0);
+const roomCount = computed(() => Number(overview.value.roomCount) || 0);
+const userCount = computed(() => Number(overview.value.userCount) || 0);
+
+const kpiCards = computed(() => [
+  {
+    label: "公司总数",
+    value: companyCount.value,
+    icon: "ri:building-2-line",
+    themeClass: "kpi-company"
+  },
+  {
+    label: "系统房源总数",
+    value: houseCount.value,
+    icon: "ri:home-5-line",
+    themeClass: "kpi-house"
+  },
+  {
+    label: "系统房间总数",
+    value: roomCount.value,
+    icon: "ri:hotel-bed-line",
+    themeClass: "kpi-room"
+  },
+  {
+    label: "系统用户总数",
+    value: userCount.value,
+    icon: "ri:user-settings-line",
+    themeClass: "kpi-account"
+  }
+]);
 
 const trialCards = computed(() => [
   {
@@ -71,23 +104,25 @@ onMounted(() => {
 
 <template>
   <div v-loading="loading" class="dashboard-page">
-    <!-- Top KPI strip -->
     <div class="kpi-strip">
-      <div class="kpi-card kpi-company">
+      <div
+        v-for="item in kpiCards"
+        :key="item.label"
+        class="kpi-card"
+        :class="item.themeClass"
+      >
         <div class="kpi-icon-wrap">
-          <IconifyIconOnline icon="ri:building-2-line" width="28" />
+          <IconifyIconOnline :icon="item.icon" width="28" />
         </div>
         <div class="kpi-body">
-          <span class="kpi-label">公司总数</span>
-          <span class="kpi-value">{{ companyCount }}</span>
+          <span class="kpi-label">{{ item.label }}</span>
+          <span class="kpi-value">{{ item.value }}</span>
         </div>
         <div class="kpi-deco" />
       </div>
     </div>
 
-    <!-- Main content grid -->
     <el-row :gutter="20" class="main-grid">
-      <!-- Package distribution -->
       <el-col :xl="14" :lg="14" :md="24" :sm="24" :xs="24" class="mb-5">
         <el-card shadow="never" class="panel-card">
           <template #header>
@@ -167,7 +202,6 @@ onMounted(() => {
         </el-card>
       </el-col>
 
-      <!-- Trial overview -->
       <el-col :xl="10" :lg="10" :md="24" :sm="24" :xs="24" class="mb-5">
         <el-card shadow="never" class="panel-card trial-panel">
           <template #header>
@@ -216,10 +250,10 @@ onMounted(() => {
 
 /* ─── KPI strip ─── */
 .kpi-strip {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
   margin-bottom: 10px;
-  flex-wrap: wrap;
 }
 
 .kpi-card {
@@ -230,9 +264,7 @@ onMounted(() => {
   padding: 20px 28px 20px 22px;
   border-radius: 16px;
   overflow: hidden;
-  min-width: 220px;
-  flex: 1;
-  max-width: 340px;
+  min-width: 0;
   background: var(--el-bg-color);
   border: 1px solid var(--el-border-color-light);
   transition:
@@ -257,6 +289,33 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
+.kpi-house .kpi-icon-wrap,
+.kpi-room .kpi-icon-wrap,
+.kpi-account .kpi-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  flex-shrink: 0;
+}
+
+.kpi-house .kpi-icon-wrap {
+  background: #ecfdf3;
+  color: #1c8f57;
+}
+
+.kpi-room .kpi-icon-wrap {
+  background: #fff7e8;
+  color: #c77600;
+}
+
+.kpi-account .kpi-icon-wrap {
+  background: #eef4ff;
+  color: #3b69d6;
+}
+
 .kpi-body {
   display: flex;
   flex-direction: column;
@@ -278,6 +337,18 @@ onMounted(() => {
   font-variant-numeric: tabular-nums;
 }
 
+.kpi-house .kpi-value {
+  color: #1c8f57;
+}
+
+.kpi-room .kpi-value {
+  color: #c77600;
+}
+
+.kpi-account .kpi-value {
+  color: #3b69d6;
+}
+
 .kpi-deco {
   position: absolute;
   right: -18px;
@@ -288,6 +359,18 @@ onMounted(() => {
   border-radius: 50%;
   background: var(--el-color-primary-light-8);
   opacity: 0.5;
+}
+
+.kpi-house .kpi-deco {
+  background: #d9f7e7;
+}
+
+.kpi-room .kpi-deco {
+  background: #ffe8bf;
+}
+
+.kpi-account .kpi-deco {
+  background: #dbe6ff;
 }
 
 /* ─── Panel cards ─── */
@@ -452,12 +535,12 @@ onMounted(() => {
 
 /* ─── Responsive ─── */
 @media (max-width: 640px) {
-  .trial-grid {
+  .kpi-strip {
     grid-template-columns: 1fr;
   }
 
-  .kpi-card {
-    max-width: 100%;
+  .trial-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>
