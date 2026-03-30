@@ -51,7 +51,8 @@ export function useTenantPackage(treeRef: Ref) {
   const columns: TableColumnList = [
     {
       label: "套餐ID",
-      prop: "id"
+      prop: "id",
+      hide: true
     },
     {
       label: "套餐名称",
