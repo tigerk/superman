@@ -70,7 +70,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="dashboard-page" v-loading="loading">
+  <div v-loading="loading" class="dashboard-page">
     <!-- Top KPI strip -->
     <div class="kpi-strip">
       <div class="kpi-card kpi-company">
