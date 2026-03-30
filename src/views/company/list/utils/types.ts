@@ -23,8 +23,16 @@ interface CompanyFormItemProps {
   email: string;
   /** 绑定域名 */
   website: string;
-  /** 账号数量 */
+  /** 配置房源数量 */
   houseCount: number;
+  /** 录入房源数量 */
+  enteredHouseCount?: number;
+  /** 录入房间数量 */
+  enteredRoomCount?: number;
+  /** 租客数量 */
+  tenantCount?: number;
+  /** 账号数量 */
+  userCount?: number;
   /** 租户套餐 */
   packageId: number;
   /** 手机号 */

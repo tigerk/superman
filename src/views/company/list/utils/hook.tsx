@@ -58,8 +58,28 @@ export function useCompanyList() {
       minWidth: 120
     },
     {
-      label: "房源数量",
+      label: "配置房源数量",
       prop: "houseCount",
+      minWidth: 120
+    },
+    {
+      label: "录入房源数量",
+      prop: "enteredHouseCount",
+      minWidth: 130
+    },
+    {
+      label: "录入房间数量",
+      prop: "enteredRoomCount",
+      minWidth: 130
+    },
+    {
+      label: "租客数量",
+      prop: "tenantCount",
+      minWidth: 120
+    },
+    {
+      label: "账号数量",
+      prop: "userCount",
       minWidth: 120
     },
     {
@@ -105,7 +125,7 @@ export function useCompanyList() {
     {
       label: "操作",
       fixed: "right",
-      width: 220,
+      width: 200,
       slot: "operation"
     }
   ];
@@ -163,11 +183,14 @@ export function useCompanyList() {
   }
 
   function handleSizeChange(val: number) {
-    console.log(`${val} items per page`);
+    pagination.pageSize = val;
+    pagination.currentPage = 1;
+    onCompanySearch().then();
   }
 
   function handleCurrentChange(val: number) {
-    console.log(`current page: ${val}`);
+    pagination.currentPage = val;
+    onCompanySearch().then();
   }
 
   function handleSelectionChange(val) {
@@ -176,7 +199,11 @@ export function useCompanyList() {
 
   async function onCompanySearch() {
     loading.value = true;
-    const { data } = await getCompanyList(toRaw(form));
+    const { data } = await getCompanyList({
+      ...toRaw(form),
+      currentPage: pagination.currentPage,
+      pageSize: pagination.pageSize
+    });
     dataList.value = data.list;
     pagination.total = Number(data.total);
     pagination.pageSize = Number(data.pageSize);
@@ -190,6 +217,7 @@ export function useCompanyList() {
   const resetForm = formEl => {
     if (!formEl) return;
     formEl.resetFields();
+    pagination.currentPage = 1;
     onCompanySearch().then();
   };
 

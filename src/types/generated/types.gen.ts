@@ -1227,9 +1227,25 @@ export type CompanyListVo = {
      */
     adminPhone?: string;
     /**
-     * 账号数量
+     * 房源数量
      */
     houseCount?: number;
+    /**
+     * 录入房源数量
+     */
+    enteredHouseCount?: number;
+    /**
+     * 录入房间数量
+     */
+    enteredRoomCount?: number;
+    /**
+     * 租客数量
+     */
+    tenantCount?: number;
+    /**
+     * 账号数量
+     */
+    userCount?: number;
     /**
      * 公司性质 1：企业 2：个人
      */
@@ -1333,6 +1349,31 @@ export type ResponseResultListAsyncRoutesVo = {
     code?: number;
     message?: string;
     data?: Array<AsyncRoutesVo>;
+};
+
+export type PlatformOverviewVo = {
+    companyCount?: string;
+    packageCompanyCounts?: Array<PlatformPackageCompanyCountVo>;
+    trialStats?: PlatformTrialStatsVo;
+};
+
+export type PlatformPackageCompanyCountVo = {
+    packageId?: string;
+    packageName?: string;
+    companyCount?: number;
+};
+
+export type PlatformTrialStatsVo = {
+    totalCount?: string;
+    pendingCount?: string;
+    approvedCount?: string;
+    rejectedCount?: string;
+};
+
+export type ResponseResultPlatformOverviewVo = {
+    code?: number;
+    message?: string;
+    data?: PlatformOverviewVo;
 };
 
 export type BooleanEnum = 'FALSE' | 'TRUE';
@@ -2435,6 +2476,22 @@ export type GetUserRoutesResponses = {
 };
 
 export type GetUserRoutesResponse = GetUserRoutesResponses[keyof GetUserRoutesResponses];
+
+export type GetOverviewData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/platform/dashboard/overview';
+};
+
+export type GetOverviewResponses = {
+    /**
+     * OK
+     */
+    200: ResponseResultPlatformOverviewVo;
+};
+
+export type GetOverviewResponse = GetOverviewResponses[keyof GetOverviewResponses];
 
 export type ListSimple2Data = {
     body?: never;

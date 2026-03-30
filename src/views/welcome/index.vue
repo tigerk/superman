@@ -1,277 +1,197 @@
 <script setup lang="ts">
-import { ref, markRaw } from "vue";
-import ReCol from "@/components/ReCol";
-import { useDark, randomGradient } from "./utils";
-import WelcomeTable from "./components/table/index.vue";
-import { ReNormalCountTo } from "@/components/ReCountTo";
-import { useRenderFlicker } from "@/components/ReFlicker";
-import { ChartBar, ChartLine, ChartRound } from "./components/charts";
-import Segmented, { type OptionsType } from "@/components/ReSegmented";
-import { chartData, barChartData, progressData, latestNewsData } from "./data";
+import { computed, onMounted, ref } from "vue";
+import { getPlatformOverview } from "@/api/platform/dashboard";
+import type { PlatformOverviewVo } from "@/types/generated";
 
 defineOptions({
   name: "Welcome"
 });
 
-const { isDark } = useDark();
+const loading = ref(false);
+const overview = ref<PlatformOverviewVo>({
+  companyCount: 0,
+  packageCompanyCounts: [],
+  trialStats: {
+    totalCount: 0,
+    pendingCount: 0,
+    approvedCount: 0,
+    rejectedCount: 0
+  }
+});
 
-let curWeek = ref(1); // 0上周、1本周
-const optionsBasis: Array<OptionsType> = [
+const companyCards = computed(() => [
   {
-    label: "上周"
+    label: "公司总数",
+    value: overview.value.companyCount || 0,
+    accent: "var(--el-color-primary)"
   },
   {
-    label: "本周"
+    label: "套餐种类",
+    value: overview.value.packageCompanyCounts?.length || 0,
+    accent: "var(--el-color-success)"
   }
-];
+]);
+
+const trialCards = computed(() => [
+  {
+    label: "试用申请总数",
+    value: overview.value.trialStats?.totalCount || 0,
+    accent: "var(--el-color-primary)"
+  },
+  {
+    label: "未处理",
+    value: overview.value.trialStats?.pendingCount || 0,
+    accent: "var(--el-color-warning)"
+  },
+  {
+    label: "已处理",
+    value: overview.value.trialStats?.approvedCount || 0,
+    accent: "var(--el-color-success)"
+  },
+  {
+    label: "已驳回",
+    value: overview.value.trialStats?.rejectedCount || 0,
+    accent: "var(--el-color-danger)"
+  }
+]);
+
+const fetchOverview = async () => {
+  loading.value = true;
+  try {
+    const res = await getPlatformOverview();
+    if (res.code === 0 && res.data) {
+      overview.value = res.data;
+    }
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchOverview();
+});
 </script>
 
 <template>
-  <div>
-    <el-row :gutter="24" justify="space-around">
-      <re-col
-        v-for="(item, index) in chartData"
-        :key="index"
-        v-motion
-        class="mb-[18px]"
-        :value="6"
+  <div class="welcome-page" v-loading="loading">
+    <el-row :gutter="18">
+      <el-col
+        v-for="item in companyCards"
+        :key="item.label"
+        :xl="12"
+        :lg="12"
         :md="12"
-        :sm="12"
+        :sm="24"
         :xs="24"
-        :initial="{
-          opacity: 0,
-          y: 100
-        }"
-        :enter="{
-          opacity: 1,
-          y: 0,
-          transition: {
-            delay: 80 * (index + 1)
-          }
-        }"
+        class="mb-[18px]"
       >
-        <el-card class="line-card" shadow="never">
-          <div class="flex justify-between">
-            <span class="text-md font-medium">
-              {{ item.name }}
-            </span>
-            <div
-              class="w-8 h-8 flex justify-center items-center rounded-md"
-              :style="{
-                backgroundColor: isDark ? 'transparent' : item.bgColor
-              }"
-            >
-              <IconifyIconOffline
-                :icon="item.icon"
-                :color="item.color"
-                width="18"
-                height="18"
-              />
-            </div>
-          </div>
-          <div class="flex justify-between items-start mt-3">
-            <div class="w-1/2">
-              <ReNormalCountTo
-                :duration="item.duration"
-                :fontSize="'1.6em'"
-                :startVal="100"
-                :endVal="item.value"
-              />
-              <p class="font-medium text-green-500">{{ item.percent }}</p>
-            </div>
-            <ChartLine
-              v-if="item.data.length > 1"
-              class="w-1/2!"
-              :color="item.color"
-              :data="item.data"
-            />
-            <ChartRound v-else class="w-1/2!" />
+        <el-card shadow="never" class="summary-card">
+          <div class="summary-label">{{ item.label }}</div>
+          <div class="summary-value" :style="{ color: item.accent }">
+            {{ item.value }}
           </div>
         </el-card>
-      </re-col>
+      </el-col>
+    </el-row>
 
-      <re-col
-        v-motion
-        class="mb-[18px]"
-        :value="18"
-        :xs="24"
-        :initial="{
-          opacity: 0,
-          y: 100
-        }"
-        :enter="{
-          opacity: 1,
-          y: 0,
-          transition: {
-            delay: 400
-          }
-        }"
-      >
-        <el-card class="bar-card" shadow="never">
-          <div class="flex justify-between">
-            <span class="text-md font-medium">分析概览</span>
-            <Segmented v-model="curWeek" :options="optionsBasis" />
-          </div>
-          <div class="flex justify-between items-start mt-3">
-            <ChartBar
-              :requireData="barChartData[curWeek].requireData"
-              :questionData="barChartData[curWeek].questionData"
-            />
-          </div>
-        </el-card>
-      </re-col>
-
-      <re-col
-        v-motion
-        class="mb-[18px]"
-        :value="6"
-        :xs="24"
-        :initial="{
-          opacity: 0,
-          y: 100
-        }"
-        :enter="{
-          opacity: 1,
-          y: 0,
-          transition: {
-            delay: 480
-          }
-        }"
-      >
-        <el-card shadow="never">
-          <div class="flex justify-between">
-            <span class="text-md font-medium">解决概率</span>
-          </div>
-          <div
-            v-for="(item, index) in progressData"
-            :key="index"
-            :class="[
-              'flex',
-              'justify-between',
-              'items-start',
-              index === 0 ? 'mt-8' : 'mt-[2.15rem]'
-            ]"
+    <el-row :gutter="18">
+      <el-col :xl="14" :lg="14" :md="24" :sm="24" :xs="24" class="mb-[18px]">
+        <el-card shadow="never" class="panel-card">
+          <template #header>
+            <div class="panel-header">
+              <span>套餐公司分布</span>
+            </div>
+          </template>
+          <el-table
+            :data="overview.packageCompanyCounts || []"
+            stripe
+            empty-text="暂无套餐数据"
           >
-            <el-progress
-              :text-inside="true"
-              :percentage="item.percentage"
-              :stroke-width="21"
-              :color="item.color"
-              striped
-              striped-flow
-              :duration="item.duration"
+            <el-table-column
+              prop="packageName"
+              label="套餐名称"
+              min-width="180"
             />
-            <span class="text-nowrap ml-2 text-text_color_regular text-sm">
-              {{ item.week }}
-            </span>
-          </div>
+            <el-table-column
+              prop="companyCount"
+              label="公司数量"
+              min-width="120"
+              align="center"
+            />
+          </el-table>
         </el-card>
-      </re-col>
+      </el-col>
 
-      <re-col
-        v-motion
-        class="mb-[18px]"
-        :value="18"
-        :xs="24"
-        :initial="{
-          opacity: 0,
-          y: 100
-        }"
-        :enter="{
-          opacity: 1,
-          y: 0,
-          transition: {
-            delay: 560
-          }
-        }"
-      >
-        <el-card shadow="never" class="h-[580px]">
-          <div class="flex justify-between">
-            <span class="text-md font-medium">数据统计</span>
+      <el-col :xl="10" :lg="10" :md="24" :sm="24" :xs="24" class="mb-[18px]">
+        <el-card shadow="never" class="panel-card">
+          <template #header>
+            <div class="panel-header">
+              <span>试用申请概览</span>
+            </div>
+          </template>
+          <div class="trial-grid">
+            <div
+              v-for="item in trialCards"
+              :key="item.label"
+              class="trial-card"
+              :style="{ borderColor: item.accent }"
+            >
+              <div class="summary-label">{{ item.label }}</div>
+              <div class="summary-value" :style="{ color: item.accent }">
+                {{ item.value }}
+              </div>
+            </div>
           </div>
-          <WelcomeTable class="mt-3" />
         </el-card>
-      </re-col>
-
-      <re-col
-        v-motion
-        class="mb-[18px]"
-        :value="6"
-        :xs="24"
-        :initial="{
-          opacity: 0,
-          y: 100
-        }"
-        :enter="{
-          opacity: 1,
-          y: 0,
-          transition: {
-            delay: 640
-          }
-        }"
-      >
-        <el-card shadow="never">
-          <div class="flex justify-between">
-            <span class="text-md font-medium">最新动态</span>
-          </div>
-          <el-scrollbar max-height="504" class="mt-3">
-            <el-timeline>
-              <el-timeline-item
-                v-for="(item, index) in latestNewsData"
-                :key="index"
-                center
-                placement="top"
-                :icon="
-                  markRaw(
-                    useRenderFlicker({
-                      background: randomGradient({
-                        randomizeHue: true
-                      })
-                    })
-                  )
-                "
-                :timestamp="item.date"
-              >
-                <p class="text-text_color_regular text-sm">
-                  {{
-                    `新增 ${item.requiredNumber} 条问题，${item.resolveNumber} 条已解决`
-                  }}
-                </p>
-              </el-timeline-item>
-            </el-timeline>
-          </el-scrollbar>
-        </el-card>
-      </re-col>
+      </el-col>
     </el-row>
   </div>
 </template>
 
-<style lang="scss" scoped>
-:deep(.el-card) {
-  --el-card-border-color: none;
-
-  /* 解决概率进度条宽度 */
-  .el-progress--line {
-    width: 85%;
-  }
-
-  /* 解决概率进度条字体大小 */
-  .el-progress-bar__innerText {
-    font-size: 15px;
-  }
-
-  /* 隐藏 el-scrollbar 滚动条 */
-  .el-scrollbar__bar {
-    display: none;
-  }
-
-  /* el-timeline 每一项上下、左右边距 */
-  .el-timeline-item {
-    margin: 0 6px;
+<style scoped lang="scss">
+.welcome-page {
+  .summary-card,
+  .panel-card {
+    border-radius: 14px;
   }
 }
 
-.main-content {
-  margin: 20px 20px 0 !important;
+.summary-label {
+  color: var(--el-text-color-secondary);
+  font-size: 14px;
+}
+
+.summary-value {
+  margin-top: 12px;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.trial-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.trial-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 12px;
+  padding: 18px;
+  background: var(--el-fill-color-blank);
+}
+
+@media (max-width: 768px) {
+  .trial-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
