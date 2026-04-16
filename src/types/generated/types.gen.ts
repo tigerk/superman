@@ -116,9 +116,9 @@ export type PlatformUserVo = {
      */
     canUpdate?: boolean;
     status?: number;
-    createTime?: string;
+    createAt?: string;
     createBy?: string;
-    lastLoginTime?: string;
+    lastLoginAt?: string;
     ipAddress?: string;
     ipSource?: string;
     registerSource?: string;
@@ -202,8 +202,8 @@ export type TrialApplicationVo = {
     usageRemark?: string;
     status?: number;
     handleRemark?: string;
-    createTime?: string;
-    updateTime?: string;
+    createAt?: string;
+    updateAt?: string;
 };
 
 /**
@@ -310,7 +310,7 @@ export type PlatformRoleVo = {
     code?: string;
     status?: number;
     createBy?: string;
-    createTime?: string;
+    createAt?: string;
     remark?: string;
     userCount?: string;
 };
@@ -404,9 +404,9 @@ export type MenuVo = {
     showParent?: boolean;
     isPlatform?: boolean;
     createBy?: string;
-    createTime?: string;
+    createAt?: string;
     updateBy?: string;
-    updateTime?: string;
+    updateAt?: string;
 };
 
 export type ResponseResultListMenuVo = {
@@ -537,7 +537,7 @@ export type PlatformMenu = {
     /**
      * 创建时间
      */
-    createTime?: string;
+    createAt?: string;
     /**
      * 更新者
      */
@@ -545,7 +545,7 @@ export type PlatformMenu = {
     /**
      * 更新时间
      */
-    updateTime?: string;
+    updateAt?: string;
 };
 
 export type ResponseResultPlatformMenu = {
@@ -595,9 +595,9 @@ export type MenuCreateDto = {
      */
     isPlatform?: boolean;
     createBy?: string;
-    createTime?: string;
+    createAt?: string;
     updateBy?: string;
-    updateTime?: string;
+    updateAt?: string;
 };
 
 export type PlatformLoginDto = {
@@ -719,11 +719,11 @@ export type DictDataTemplate = {
     /**
      * 创建时间
      */
-    createTime?: string;
+    createAt?: string;
     /**
      * 更新时间
      */
-    updateTime?: string;
+    updateAt?: string;
 };
 
 export type ResponseResultListDictDataTemplate = {
@@ -860,9 +860,9 @@ export type CompanyCreateDto = {
     packageId?: string;
     status?: number;
     remark?: string;
-    createTime?: string;
+    createAt?: string;
     createBy?: string;
-    updateTime?: string;
+    updateAt?: string;
     updateBy?: string;
 };
 
@@ -967,9 +967,9 @@ export type CompanyPackageVo = {
     packageMenus?: Array<string>;
     status?: number;
     remark?: string;
-    createTime?: string;
+    createAt?: string;
     createBy?: string;
-    updateTime?: string;
+    updateAt?: string;
     updateBy?: string;
 };
 
@@ -1117,7 +1117,7 @@ export type Menu = {
     /**
      * 创建时间
      */
-    createTime?: string;
+    createAt?: string;
     /**
      * 更新者
      */
@@ -1125,7 +1125,7 @@ export type Menu = {
     /**
      * 更新时间
      */
-    updateTime?: string;
+    updateAt?: string;
 };
 
 export type ResponseResultMenu = {
@@ -1269,7 +1269,7 @@ export type CompanyListVo = {
     /**
      * 创建时间
      */
-    createTime?: string;
+    createAt?: string;
     /**
      * 创建人
      */
@@ -1277,7 +1277,7 @@ export type CompanyListVo = {
     /**
      * 更新时间
      */
-    updateTime?: string;
+    updateAt?: string;
     /**
      * 更新人
      */

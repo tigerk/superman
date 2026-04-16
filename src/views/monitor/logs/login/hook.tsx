@@ -10,7 +10,7 @@ export function useRole(tableRef: Ref) {
   const form = reactive({
     username: "",
     status: "",
-    loginTime: ""
+    loginAt: ""
   });
   const dataList = ref([]);
   const loading = ref(true);
@@ -77,10 +77,10 @@ export function useRole(tableRef: Ref) {
     },
     {
       label: "登录时间",
-      prop: "loginTime",
+      prop: "loginAt",
       minWidth: 180,
-      formatter: ({ loginTime }) =>
-        dayjs(loginTime).format("YYYY-MM-DD HH:mm:ss")
+      formatter: ({ loginAt }) =>
+        dayjs(loginAt).format("YYYY-MM-DD HH:mm:ss")
     }
   ];
 

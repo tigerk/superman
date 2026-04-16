@@ -117,10 +117,10 @@ export function useCompanyList() {
     },
     {
       label: "创建时间",
-      prop: "createTime",
+      prop: "createAt",
       minWidth: 160,
-      formatter: ({ createTime }) =>
-        dayjs(createTime).format("YYYY-MM-DD HH:mm:ss")
+      formatter: ({ createAt }) =>
+        dayjs(createAt).format("YYYY-MM-DD HH:mm:ss")
     },
     {
       label: "操作",

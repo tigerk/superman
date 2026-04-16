@@ -52,9 +52,9 @@ const {
           class="w-[170px]!"
         />
       </el-form-item>
-      <el-form-item label="请求时间" prop="requestTime">
+      <el-form-item label="请求时间" prop="requestAt">
         <el-date-picker
-          v-model="form.requestTime"
+          v-model="form.requestAt"
           :shortcuts="getPickerShortcuts()"
           type="datetimerange"
           range-separator="至"

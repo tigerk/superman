@@ -104,17 +104,17 @@ const columns: TableColumnList = [
   },
   {
     label: "申请时间",
-    prop: "createTime",
+    prop: "createAt",
     minWidth: 170,
-    formatter: ({ createTime }) =>
-      createTime ? dayjs(createTime).format("YYYY-MM-DD HH:mm:ss") : "-"
+    formatter: ({ createAt }) =>
+      createAt ? dayjs(createAt).format("YYYY-MM-DD HH:mm:ss") : "-"
   },
   {
     label: "更新时间",
-    prop: "updateTime",
+    prop: "updateAt",
     minWidth: 170,
-    formatter: ({ updateTime }) =>
-      updateTime ? dayjs(updateTime).format("YYYY-MM-DD HH:mm:ss") : "-"
+    formatter: ({ updateAt }) =>
+      updateAt ? dayjs(updateAt).format("YYYY-MM-DD HH:mm:ss") : "-"
   },
   {
     label: "操作",
